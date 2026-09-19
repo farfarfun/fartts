@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FunTTS高级使用示例
+FarTTS高级使用示例
 演示配置管理、批量处理、自定义引擎等高级功能
 """
 
@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from funtts import TTSFactory, TTSConfig, get_config, create_tts, get_available_engines
+from fartts import TTSFactory, create_tts, get_available_engines, get_config
 
 
 def demo_config_management():
@@ -174,14 +174,14 @@ def demo_engine_comparison():
                     "supports_subtitles": sub_maker is not None,
                 }
 
-                print(f"  ✓ 成功")
+                print("  ✓ 成功")
                 print(f"    文件大小: {file_size} bytes")
                 print(f"    音频时长: {duration:.2f} 秒")
                 print(f"    处理时间: {processing_time:.2f} 秒")
                 print(f"    字幕支持: {'是' if sub_maker else '否'}")
             else:
                 results[engine_name] = {"success": False}
-                print(f"  ✗ 失败")
+                print("  ✗ 失败")
 
         except Exception as e:
             results[engine_name] = {"success": False, "error": str(e)}
@@ -216,8 +216,7 @@ def demo_custom_engine():
     """演示如何注册自定义TTS引擎"""
     print("=== 自定义引擎示例 ===")
 
-    from funtts.base import BaseTTS
-    from typing import List, Dict, Any, Optional
+    from fartts.base import BaseTTS
 
     class DemoTTS(BaseTTS):
         """演示用的自定义TTS引擎"""
@@ -272,7 +271,7 @@ def demo_custom_engine():
 
 def main():
     """主函数"""
-    print("=== FunTTS 高级使用示例 ===\n")
+    print("=== FarTTS 高级使用示例 ===\n")
 
     # 演示各种高级功能
     demo_config_management()

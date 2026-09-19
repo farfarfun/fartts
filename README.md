@@ -1,10 +1,10 @@
-# FunTTS - 统一TTS接口库
+# FarTTS - 统一TTS接口库
 
-[![PyPI version](https://badge.fury.io/py/funtts-plus.svg)](https://badge.fury.io/py/funtts-plus)
-[![Python](https://img.shields.io/pypi/pyversions/funtts-plus.svg)](https://pypi.org/project/funtts-plus/)
+[![PyPI version](https://badge.fury.io/py/fartts.svg)](https://badge.fury.io/py/fartts)
+[![Python](https://img.shields.io/pypi/pyversions/fartts.svg)](https://pypi.org/project/fartts/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-FunTTS是一个现代化的Python文本转语音(TTS)库，提供统一的接口来无缝切换不同的开源TTS引擎。通过简单的配置，你可以在多个TTS引擎之间轻松切换，而无需修改代码。
+FarTTS是一个现代化的Python文本转语音(TTS)库，提供统一的接口来无缝切换不同的开源TTS引擎。通过简单的配置，你可以在多个TTS引擎之间轻松切换，而无需修改代码。
 
 ## ✨ 核心特性
 
@@ -25,15 +25,15 @@ FunTTS是一个现代化的Python文本转语音(TTS)库，提供统一的接口
 
 | 引擎 | 状态 | CPU | GPU | API密钥 | 网络 | 质量 | 速度 | 特色功能 | 文档 |
 |------|------|-----|-----|---------|------|------|------|----------|------|
-| **Edge TTS** 🌟 | ✅ | ✅ | ➖ | 🆓 免费 | 🌐 需要 | 9.0/10 | 12x | 200+语音，100+语言 | [📖](src/funtts/tts/edge/README.md) |
-| **Azure TTS** 🏢 | ✅ | ✅ | ➖ | 🔑 需要 | 🌐 需要 | 9.5/10 | 7.5x | SSML，企业级 | [📖](src/funtts/tts/azure/README.md) |
-| **Bark TTS** 🎭 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | 📥 首次 | 8.0/10 | 0.4x | 特效音效，笑声音乐 | [📖](src/funtts/tts/bark/README.md) |
-| **Tortoise TTS** 🐢 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | 📥 首次 | 9.8/10 | 0.13x | 语音克隆，极致质量 | [📖](src/funtts/tts/tortoise/README.md) |
-| **IndexTTS2** ⚡ | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | ➖ 离线 | 8.5/10 | 2.0x | 情感控制，时长控制 | [📖](src/funtts/tts/indextts2/README.md) |
-| **KittenTTS** 🐱 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | ➖ 离线 | 7.5/10 | 5.0x | 神经网络，轻量级 | [📖](src/funtts/tts/kitten/README.md) |
-| **eSpeak** 🔧 | ✅ | ✅ | ➖ | 🆓 免费 | ➖ 离线 | 5.0/10 | 60x | 轻量级，多语言 | [📖](src/funtts/tts/espeak/README.md) |
-| **pyttsx3** 💻 | ✅ | ✅ | ➖ | 🆓 免费 | ➖ 离线 | 6.0/10 | 30x | 跨平台，系统集成 | [📖](src/funtts/tts/pyttsx3/README.md) |
-| ~~Coqui TTS~~ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | 暂时禁用（兼容性问题） | ~~[📖](src/funtts/tts/coqui/README.md)~~ |
+| **Edge TTS** 🌟 | ✅ | ✅ | ➖ | 🆓 免费 | 🌐 需要 | 9.0/10 | 12x | 200+语音，100+语言 | [📖](src/fartts/tts/edge/README.md) |
+| **Azure TTS** 🏢 | ✅ | ✅ | ➖ | 🔑 需要 | 🌐 需要 | 9.5/10 | 7.5x | SSML，企业级 | [📖](src/fartts/tts/azure/README.md) |
+| **Bark TTS** 🎭 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | 📥 首次 | 8.0/10 | 0.4x | 特效音效，笑声音乐 | [📖](src/fartts/tts/bark/README.md) |
+| **Tortoise TTS** 🐢 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | 📥 首次 | 9.8/10 | 0.13x | 语音克隆，极致质量 | [📖](src/fartts/tts/tortoise/README.md) |
+| **IndexTTS2** ⚡ | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | ➖ 离线 | 8.5/10 | 2.0x | 情感控制，时长控制 | [📖](src/fartts/tts/indextts2/README.md) |
+| **KittenTTS** 🐱 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | ➖ 离线 | 7.5/10 | 5.0x | 神经网络，轻量级 | [📖](src/fartts/tts/kitten/README.md) |
+| **eSpeak** 🔧 | ✅ | ✅ | ➖ | 🆓 免费 | ➖ 离线 | 5.0/10 | 60x | 轻量级，多语言 | [📖](src/fartts/tts/espeak/README.md) |
+| **pyttsx3** 💻 | ✅ | ✅ | ➖ | 🆓 免费 | ➖ 离线 | 6.0/10 | 30x | 跨平台，系统集成 | [📖](src/fartts/tts/pyttsx3/README.md) |
+| ~~Coqui TTS~~ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | 暂时禁用（兼容性问题） | ~~[📖](src/fartts/tts/coqui/README.md)~~ |
 
 ### 🔍 图例说明
 
@@ -69,7 +69,7 @@ FunTTS是一个现代化的Python文本转语音(TTS)库，提供统一的接口
 
 ```bash
 # 基础功能安装
-pip install funtts-plus
+pip install fartts
 ```
 
 ### 按需安装引擎
@@ -78,31 +78,31 @@ pip install funtts-plus
 
 ```bash
 # Edge TTS (推荐，免费高质量)
-pip install funtts-plus[edge]
+pip install fartts[edge]
 
 # Azure TTS (需要API密钥)
-pip install funtts-plus[azure]
+pip install fartts[azure]
 
 # Coqui TTS (暂时禁用，Python版本兼容性问题)
-# pip install funtts-plus[coqui]
+# pip install fartts[coqui]
 
 # Bark TTS (支持非语言声音和音乐生成)
-pip install funtts-plus[bark]
+pip install fartts[bark]
 
 # Tortoise TTS (高质量语音克隆)
-pip install funtts-plus[tortoise]
+pip install fartts[tortoise]
 
 # IndexTTS2 (工业级TTS，支持情感控制)
-pip install funtts-plus[indextts2]
+pip install fartts[indextts2]
 
 # KittenTTS (深度学习TTS，需要GPU支持)
-pip install funtts-plus[kitten]
+pip install fartts[kitten]
 
 # pyttsx3 (跨平台本地TTS)
-pip install funtts-plus[pyttsx3]
+pip install fartts[pyttsx3]
 
 # 完整安装（所有引擎）
-pip install funtts-plus[all]
+pip install fartts[all]
 ```
 
 ### 系统依赖
@@ -136,7 +136,7 @@ brew install ffmpeg
 ### 基本使用
 
 ```python
-from funtts import create_tts, TTSRequest
+from fartts import create_tts, TTSRequest
 
 # 使用默认配置创建TTS实例
 tts = create_tts()
@@ -151,7 +151,7 @@ tts.create_tts(
 
 # 方式2：使用Request/Response模式（推荐）
 request = TTSRequest(
-    text="你好，这是FunTTS的新架构演示。",
+    text="你好，这是FarTTS的新架构演示。",
     voice_name="zh-CN-XiaoxiaoNeural",
     voice_rate=1.2,
     output_file="demo.wav",
@@ -173,7 +173,7 @@ else:
 ### 指定TTS引擎
 
 ```python
-from funtts import TTSFactory
+from fartts import TTSFactory
 
 # 使用Edge TTS
 edge_tts = TTSFactory.create_tts(engine_name="edge", voice_name="zh-CN-XiaoxiaoNeural")
@@ -191,7 +191,7 @@ pyttsx3_tts = TTSFactory.create_tts(
 ### 配置管理
 
 ```python
-from funtts import get_config
+from fartts import get_config
 
 # 获取全局配置
 config = get_config()
@@ -213,7 +213,7 @@ config.save_config()
 ### 获取可用语音
 
 ```python
-from funtts import TTSFactory
+from fartts import TTSFactory
 
 # 创建TTS实例
 tts = TTSFactory.create_tts("edge", "zh-CN-XiaoxiaoNeural")
@@ -233,7 +233,7 @@ is_available = tts.is_voice_available("zh-CN-XiaoxiaoNeural")
 ### 工厂模式
 
 ```python
-from funtts import TTSFactory, get_available_engines
+from fartts import TTSFactory, get_available_engines
 
 # 查看所有可用引擎
 engines = get_available_engines()
@@ -253,7 +253,7 @@ for engine in engines:
 ### 自定义配置
 
 ```python
-from funtts import TTSFactory
+from fartts import TTSFactory
 
 # 使用自定义配置
 custom_config = {"volume": 0.8, "pitch": 1.1}
@@ -264,7 +264,7 @@ tts = TTSFactory.create_tts(engine_name="pyttsx3", voice_name="0", config=custom
 ### 批量处理
 
 ```python
-from funtts import create_tts
+from fartts import create_tts
 import os
 
 # 批量处理文本文件
@@ -285,7 +285,7 @@ for i, text in enumerate(texts):
 
 ## 配置文件
 
-FunTTS使用JSON格式的配置文件，默认位置为 `~/.funtts/config.json`：
+FarTTS使用JSON格式的配置文件，默认位置为 `~/.fartts/config.json`：
 
 ```json
 {
@@ -344,7 +344,7 @@ python examples/utils_example.py
 ## 🏗️ 项目架构
 
 ```
-funtts/
+fartts/
 ├── base/           # 基础抽象类
 │   └── base.py     # BaseTTS基类
 ├── models/         # 数据模型
@@ -371,8 +371,8 @@ funtts/
 ### 多角色对话生成
 
 ```python
-from funtts import create_tts, TTSRequest
-from funtts.utils import merge_tts_responses_with_speakers
+from fartts import create_tts, TTSRequest
+from fartts.utils import merge_tts_responses_with_speakers
 
 # 创建TTS实例
 tts = create_tts("edge")
@@ -415,14 +415,14 @@ if merged.success:
 ### 字幕格式支持
 
 ```python
-from funtts import create_tts, TTSRequest
-from funtts.models import SubtitleMaker
+from fartts import create_tts, TTSRequest
+from fartts.models import SubtitleMaker
 
 tts = create_tts("edge")
 
 # 生成多种字幕格式
 request = TTSRequest(
-    text="FunTTS支持多种字幕格式，包括SRT、VTT和FRT格式。",
+    text="FarTTS支持多种字幕格式，包括SRT、VTT和FRT格式。",
     voice_name="zh-CN-XiaoxiaoNeural",
     output_file="demo.wav",
     generate_subtitles=True,
@@ -448,47 +448,47 @@ if response.success:
 每个TTS引擎都有详细的文档说明，包含安装、配置、使用示例和故障排除指南：
 
 ### 🎯 Edge TTS
-- **文档**: [src/funtts/tts/edge/README.md](src/funtts/tts/edge/README.md)
+- **文档**: [src/fartts/tts/edge/README.md](src/fartts/tts/edge/README.md)
 - **特点**: 免费、高质量、多语言支持
 - **适用**: 大多数应用场景，推荐首选
 
 ### ☁️ Azure TTS  
-- **文档**: [src/funtts/tts/azure/README.md](src/funtts/tts/azure/README.md)
+- **文档**: [src/fartts/tts/azure/README.md](src/fartts/tts/azure/README.md)
 - **特点**: 企业级、SSML支持、高度可定制
 - **适用**: 商业应用、需要高级功能的场景
 
 ### 🐸 Coqui TTS
-- **文档**: [src/funtts/tts/coqui/README.md](src/funtts/tts/coqui/README.md)
+- **文档**: [src/fartts/tts/coqui/README.md](src/fartts/tts/coqui/README.md)
 - **特点**: 多模型支持、语音克隆、多语言、可训练
 - **适用**: 研究开发、自定义模型、多语言应用
 
 ### 🌳 Bark TTS
-- **文档**: [src/funtts/tts/bark/README.md](src/funtts/tts/bark/README.md)
+- **文档**: [src/fartts/tts/bark/README.md](src/fartts/tts/bark/README.md)
 - **特点**: 非语言声音、音乐生成、特效音效、情感表达
 - **适用**: 创意内容、播客制作、游戏音效、娱乐应用
 
 ### 🐢 Tortoise TTS
-- **文档**: [src/funtts/tts/tortoise/README.md](src/funtts/tts/tortoise/README.md)
+- **文档**: [src/fartts/tts/tortoise/README.md](src/fartts/tts/tortoise/README.md)
 - **特点**: 极高音质、语音克隆、接近真人、多种预设
 - **适用**: 高质量配音、语音克隆、专业制作
 
 ### 🏭 IndexTTS2
-- **文档**: [src/funtts/tts/indextts2/README.md](src/funtts/tts/indextts2/README.md)
+- **文档**: [src/fartts/tts/indextts2/README.md](src/fartts/tts/indextts2/README.md)
 - **特点**: 工业级、情感控制、自然语言指令、精确时长控制
 - **适用**: 专业应用、情感语音、内容创作、AI助手
 
 ### 🐱 KittenTTS
-- **文档**: [src/funtts/tts/kitten/README.md](src/funtts/tts/kitten/README.md)
+- **文档**: [src/fartts/tts/kitten/README.md](src/fartts/tts/kitten/README.md)
 - **特点**: 深度学习、高质量、神经网络、多语音风格
 - **适用**: 高质量语音需求、AI应用、内容创作
 
 ### 🔊 eSpeak TTS
-- **文档**: [src/funtts/tts/espeak/README.md](src/funtts/tts/espeak/README.md)
+- **文档**: [src/fartts/tts/espeak/README.md](src/fartts/tts/espeak/README.md)
 - **特点**: 轻量级、开源、多语言
 - **适用**: Linux环境、嵌入式系统、资源受限场景
 
 ### 🖥️ Pyttsx3 TTS
-- **文档**: [src/funtts/tts/pyttsx3/README.md](src/funtts/tts/pyttsx3/README.md)
+- **文档**: [src/fartts/tts/pyttsx3/README.md](src/fartts/tts/pyttsx3/README.md)
 - **特点**: 跨平台、本地离线、系统集成
 - **适用**: 桌面应用、离线环境、快速原型
 
@@ -503,9 +503,9 @@ if response.success:
 3. 在工厂类中注册新引擎
 
 ```python
-from funtts.base import BaseTTS
-from funtts import TTSFactory, TTSRequest, TTSResponse
-from funtts.models import VoiceInfo
+from fartts.base import BaseTTS
+from fartts import TTSFactory, TTSRequest, TTSResponse
+from fartts.models import VoiceInfo
 from typing import List
 
 
@@ -561,8 +561,8 @@ custom_tts = TTSFactory.create_tts("mycustom", "custom_voice_1")
 
 ```bash
 # 克隆项目
-git clone https://github.com/farfarfun/funtts.git
-cd funtts
+git clone https://github.com/farfarfun/fartts.git
+cd fartts
 
 # 安装开发依赖
 pip install -e .[all]
@@ -571,8 +571,8 @@ pip install -e .[all]
 python -m pytest tests/
 
 # 代码格式化
-black src/
-isort src/
+ruff check --fix .
+ruff format .
 
 # 类型检查
 mypy src/
@@ -622,8 +622,8 @@ mypy src/
 
 ## 📞 联系我们
 
-- **GitHub Issues**: [提交问题](https://github.com/farfarfun/funtts/issues)
-- **GitHub Discussions**: [参与讨论](https://github.com/farfarfun/funtts/discussions)
+- **GitHub Issues**: [提交问题](https://github.com/farfarfun/fartts/issues)
+- **GitHub Discussions**: [参与讨论](https://github.com/farfarfun/fartts/discussions)
 - **Email**: farfarfun@qq.com
 
 ---
@@ -635,3 +635,16 @@ mypy src/
 Made with ❤️ by [FarFarFun Team](https://github.com/farfarfun)
 
 </div>
+
+---
+
+## 关于 farfarfun
+
+[farfarfun](https://github.com/farfarfun) 是一个专注于实用工具库的开源组织，
+涵盖云存储、数据处理、AI、多媒体与开发工具链等方向。
+
+- 🏠 组织主页：<https://github.com/farfarfun>
+- 📦 PyPI：<https://pypi.org/user/niuliangtao/>
+- 📧 联系：farfarfun@qq.com
+
+本项目基于 [MIT](LICENSE) 协议开源。

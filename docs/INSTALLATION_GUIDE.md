@@ -1,6 +1,6 @@
-# FunTTS 安装和部署指南
+# FarTTS 安装和部署指南
 
-本指南将详细介绍如何安装和部署FunTTS项目，包括各种TTS引擎的配置和最佳实践。
+本指南将详细介绍如何安装和部署FarTTS项目，包括各种TTS引擎的配置和最佳实践。
 
 ## 📋 系统要求
 
@@ -21,22 +21,22 @@
 
 ```bash
 # 创建虚拟环境（推荐）
-python -m venv funtts-env
-source funtts-env/bin/activate  # Linux/macOS
-# 或 funtts-env\Scripts\activate  # Windows
+python -m venv fartts-env
+source fartts-env/bin/activate  # Linux/macOS
+# 或 fartts-env\Scripts\activate  # Windows
 
 # 安装基础包
 pip install --upgrade pip
-pip install funtts-plus
+pip install fartts
 ```
 
 ### 2. 验证安装
 
 ```python
-import funtts
+import fartts
 
-print(f"FunTTS版本: {funtts.__version__}")
-print(f"可用引擎: {funtts.get_available_engines()}")
+print(f"FarTTS版本: {fartts.__version__}")
+print(f"可用引擎: {fartts.get_available_engines()}")
 ```
 
 ## 🎯 按需安装TTS引擎
@@ -45,10 +45,10 @@ print(f"可用引擎: {funtts.get_available_engines()}")
 
 ```bash
 # 安装Edge TTS
-pip install funtts-plus[edge]
+pip install fartts[edge]
 
 # 验证安装
-python -c "from funtts.tts.edge import EdgeTTS; print('Edge TTS安装成功')"
+python -c "from fartts.tts.edge import EdgeTTS; print('Edge TTS安装成功')"
 ```
 
 **特点:**
@@ -61,7 +61,7 @@ python -c "from funtts.tts.edge import EdgeTTS; print('Edge TTS安装成功')"
 
 ```bash
 # 安装Azure TTS
-pip install funtts-plus[azure]
+pip install fartts[azure]
 
 # 设置API密钥
 export AZURE_SPEECH_KEY="your-api-key"
@@ -76,7 +76,7 @@ export AZURE_SPEECH_REGION="your-region"
 
 **验证:**
 ```python
-from funtts.tts.azure import AzureTTS
+from fartts.tts.azure import AzureTTS
 
 tts = AzureTTS()
 voices = tts.list_voices()
@@ -87,10 +87,10 @@ print(f"可用语音数量: {len(voices)}")
 
 ```bash
 # 安装Bark TTS
-pip install funtts-plus[bark]
+pip install fartts[bark]
 
 # 首次运行会自动下载模型（需要网络连接）
-python -c "from funtts.tts.bark import BarkTTS; BarkTTS()"
+python -c "from fartts.tts.bark import BarkTTS; BarkTTS()"
 ```
 
 **注意事项:**
@@ -103,10 +103,10 @@ python -c "from funtts.tts.bark import BarkTTS; BarkTTS()"
 
 ```bash
 # 安装Tortoise TTS
-pip install funtts-plus[tortoise]
+pip install fartts[tortoise]
 
 # 首次运行会下载模型
-python -c "from funtts.tts.tortoise import TortoiseTTS; TortoiseTTS()"
+python -c "from fartts.tts.tortoise import TortoiseTTS; TortoiseTTS()"
 ```
 
 **注意事项:**
@@ -119,21 +119,21 @@ python -c "from funtts.tts.tortoise import TortoiseTTS; TortoiseTTS()"
 
 ```bash
 # 安装IndexTTS2
-pip install funtts-plus[indextts2]
+pip install fartts[indextts2]
 ```
 
 ### KittenTTS (神经网络)
 
 ```bash
 # 安装KittenTTS
-pip install funtts-plus[kitten]
+pip install fartts[kitten]
 ```
 
 ### eSpeak (轻量级)
 
 ```bash
 # 安装eSpeak
-pip install funtts-plus[espeak]
+pip install fartts[espeak]
 
 # Linux系统需要额外安装系统包
 sudo apt-get install espeak espeak-data  # Ubuntu/Debian
@@ -145,7 +145,7 @@ brew install espeak                      # macOS
 
 ```bash
 # 安装pyttsx3
-pip install funtts-plus[pyttsx3]
+pip install fartts[pyttsx3]
 
 # 使用系统内置TTS引擎，无需额外配置
 ```
@@ -154,7 +154,7 @@ pip install funtts-plus[pyttsx3]
 
 ```bash
 # 安装所有支持的TTS引擎
-pip install funtts-plus[all]
+pip install fartts[all]
 ```
 
 ## 🐳 Docker部署
@@ -170,8 +170,8 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装FunTTS
-RUN pip install funtts-plus[edge,azure,espeak,pyttsx3]
+# 安装FarTTS
+RUN pip install fartts[edge,azure,espeak,pyttsx3]
 
 # 设置工作目录
 WORKDIR /app
@@ -201,8 +201,8 @@ RUN apt-get update && apt-get install -y \
 # 安装PyTorch (GPU版本)
 RUN pip3 install torch torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-# 安装FunTTS (包含GPU支持的引擎)
-RUN pip3 install funtts-plus[bark,tortoise,indextts2,kitten]
+# 安装FarTTS (包含GPU支持的引擎)
+RUN pip3 install fartts[bark,tortoise,indextts2,kitten]
 
 WORKDIR /app
 COPY . .
@@ -216,7 +216,7 @@ CMD ["python3", "app.py"]
 version: '3.8'
 
 services:
-  funtts:
+  fartts:
     build: .
     ports:
       - "8000:8000"
@@ -248,7 +248,7 @@ AZURE_SPEECH_REGION=your-azure-region
 
 # 日志配置
 FUNTTS_LOG_LEVEL=INFO
-FUNTTS_LOG_FILE=./logs/funtts.log
+FUNTTS_LOG_FILE=./logs/fartts.log
 
 # 缓存配置
 FUNTTS_CACHE_DIR=./cache
@@ -260,10 +260,10 @@ CUDA_VISIBLE_DEVICES=0
 
 ### 配置文件
 
-创建 `funtts_config.yaml`:
+创建 `fartts_config.yaml`:
 
 ```yaml
-# FunTTS配置文件
+# FarTTS配置文件
 default_engine: "edge"
 default_voice: "zh-CN-XiaoxiaoNeural"
 
@@ -294,7 +294,7 @@ output:
 
 logging:
   level: "INFO"
-  file: "./logs/funtts.log"
+  file: "./logs/fartts.log"
 ```
 
 ## 🧪 测试安装
@@ -303,20 +303,20 @@ logging:
 
 ```python
 #!/usr/bin/env python3
-"""FunTTS安装测试脚本"""
+"""FarTTS安装测试脚本"""
 
-import funtts
-from funtts.models import TTSRequest
+import fartts
+from fartts.models import TTSRequest
 
 
 def test_installation():
-    """测试FunTTS安装"""
-    print("🧪 开始测试FunTTS安装...")
+    """测试FarTTS安装"""
+    print("🧪 开始测试FarTTS安装...")
 
     # 测试基础导入
     try:
-        print(f"✅ FunTTS版本: {funtts.__version__}")
-        available_engines = funtts.get_available_engines()
+        print(f"✅ FarTTS版本: {fartts.__version__}")
+        available_engines = fartts.get_available_engines()
         print(f"✅ 可用引擎: {available_engines}")
     except Exception as e:
         print(f"❌ 基础导入失败: {e}")
@@ -325,7 +325,7 @@ def test_installation():
     # 测试Edge TTS（如果可用）
     if "edge" in available_engines:
         try:
-            from funtts.tts.edge import EdgeTTS
+            from fartts.tts.edge import EdgeTTS
 
             tts = EdgeTTS()
             voices = tts.list_voices(language="zh-CN")
@@ -336,7 +336,7 @@ def test_installation():
     # 测试eSpeak（如果可用）
     if "espeak" in available_engines:
         try:
-            from funtts.tts.espeak import EspeakTTS
+            from fartts.tts.espeak import EspeakTTS
 
             tts = EspeakTTS()
             print("✅ eSpeak TTS: 安装正常")
@@ -357,15 +357,15 @@ if __name__ == "__main__":
 #!/usr/bin/env python3
 """语音生成测试"""
 
-import funtts
-from funtts.models import TTSRequest
+import fartts
+from fartts.models import TTSRequest
 
 
 def test_speech_generation():
     """测试语音生成功能"""
 
     # 使用最可靠的引擎进行测试
-    available_engines = funtts.get_available_engines()
+    available_engines = fartts.get_available_engines()
 
     test_engines = []
     if "edge" in available_engines:
@@ -383,10 +383,10 @@ def test_speech_generation():
         try:
             print(f"🧪 测试{engine_name}引擎...")
 
-            tts = funtts.create_tts(engine_name=engine_name)
+            tts = fartts.create_tts(engine_name=engine_name)
 
             request = TTSRequest(
-                text="这是FunTTS的安装测试。", output_dir="./test_output"
+                text="这是FarTTS的安装测试。", output_dir="./test_output"
             )
 
             response = tts.synthesize(request)
@@ -406,16 +406,16 @@ if __name__ == "__main__":
 
 ### 1. 导入错误
 
-**问题**: `ImportError: No module named 'funtts'`
+**问题**: `ImportError: No module named 'fartts'`
 
 **解决方案**:
 ```bash
 # 确认安装
-pip list | grep funtts
+pip list | grep fartts
 
 # 重新安装
-pip uninstall funtts-plus
-pip install funtts-plus
+pip uninstall fartts
+pip install fartts
 ```
 
 ### 2. Edge TTS网络问题
@@ -431,7 +431,7 @@ os.environ["HTTP_PROXY"] = "http://proxy:port"
 os.environ["HTTPS_PROXY"] = "http://proxy:port"
 
 # 增加超时时间
-from funtts.tts.edge import EdgeTTS
+from fartts.tts.edge import EdgeTTS
 
 tts = EdgeTTS(timeout=60)
 ```
@@ -472,12 +472,12 @@ export CUDA_VISIBLE_DEVICES=""
 **解决方案**:
 ```python
 # 使用轻量级引擎
-from funtts.tts.espeak import EspeakTTS
+from fartts.tts.espeak import EspeakTTS
 
 tts = EspeakTTS()
 
 # 或使用小模型
-from funtts.tts.bark import BarkTTS
+from fartts.tts.bark import BarkTTS
 
 tts = BarkTTS(use_small_models=True)
 ```
@@ -488,13 +488,13 @@ tts = BarkTTS(use_small_models=True)
 
 ```bash
 # 查看当前版本
-pip show funtts-plus
+pip show fartts
 
 # 升级到最新版本
-pip install --upgrade funtts-plus
+pip install --upgrade fartts
 
 # 升级特定引擎
-pip install --upgrade funtts-plus[edge,azure]
+pip install --upgrade fartts[edge,azure]
 ```
 
 ### 配置迁移
@@ -521,7 +521,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 async def batch_synthesis(texts, engine_name="edge"):
     """批量语音合成"""
-    tts = funtts.create_tts(engine_name=engine_name)
+    tts = fartts.create_tts(engine_name=engine_name)
 
     with ThreadPoolExecutor(max_workers=4) as executor:
         tasks = []
@@ -556,19 +556,19 @@ def process_large_batch(texts):
 
 ### 1. 系统服务
 
-创建systemd服务文件 `/etc/systemd/system/funtts.service`:
+创建systemd服务文件 `/etc/systemd/system/fartts.service`:
 
 ```ini
 [Unit]
-Description=FunTTS Service
+Description=FarTTS Service
 After=network.target
 
 [Service]
 Type=simple
-User=funtts
-WorkingDirectory=/opt/funtts
-Environment=PATH=/opt/funtts/venv/bin
-ExecStart=/opt/funtts/venv/bin/python app.py
+User=fartts
+WorkingDirectory=/opt/fartts
+Environment=PATH=/opt/fartts/venv/bin
+ExecStart=/opt/fartts/venv/bin/python app.py
 Restart=always
 RestartSec=10
 
@@ -581,7 +581,7 @@ WantedBy=multi-user.target
 使用Nginx进行负载均衡：
 
 ```nginx
-upstream funtts_backend {
+upstream fartts_backend {
     server 127.0.0.1:8001;
     server 127.0.0.1:8002;
     server 127.0.0.1:8003;
@@ -592,7 +592,7 @@ server {
     server_name your-domain.com;
     
     location / {
-        proxy_pass http://funtts_backend;
+        proxy_pass http://fartts_backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
@@ -603,13 +603,10 @@ server {
 
 ```python
 # 配置日志
-import logging
-from funtts import get_config
+from farlog import configure, getLogger
 
-config = get_config()
-config.setup_logging(
-    level="INFO", file="/var/log/funtts/app.log", max_size="100MB", backup_count=5
-)
+configure("/var/log/fartts")
+logger = getLogger("fartts")
 ```
 
 ## 📞 技术支持
@@ -617,7 +614,7 @@ config.setup_logging(
 如果遇到安装或部署问题，请：
 
 1. 查看 [FAQ文档](FAQ.md)
-2. 搜索 [GitHub Issues](https://github.com/farfarfun/funtts/issues)
+2. 搜索 [GitHub Issues](https://github.com/farfarfun/fartts/issues)
 3. 提交新的Issue，包含：
    - 系统信息 (`python --version`, `pip --version`)
    - 错误日志
@@ -625,7 +622,7 @@ config.setup_logging(
 
 ## 🎉 安装完成
 
-恭喜！你已经成功安装了FunTTS。现在可以：
+恭喜！你已经成功安装了FarTTS。现在可以：
 
 1. 查看 [快速开始指南](../README.md#快速开始)
 2. 阅读 [TTS引擎选择指南](TTS_ENGINE_SELECTION_GUIDE.md)

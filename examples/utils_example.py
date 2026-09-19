@@ -1,5 +1,5 @@
 """
-FunTTS工具函数使用示例
+FarTTS工具函数使用示例
 演示音频合并、字幕合并、响应合并等功能
 """
 
@@ -8,8 +8,8 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from funtts import create_tts, TTSRequest
-from funtts.utils import merge_audio_files, merge_subtitle_makers, merge_tts_responses
+from fartts import TTSRequest, create_tts
+from fartts.utils import merge_audio_files, merge_tts_responses
 
 
 def demo_basic_merge():
@@ -21,7 +21,7 @@ def demo_basic_merge():
 
     # 准备多段文本
     texts = [
-        "欢迎使用FunTTS文本转语音系统。",
+        "欢迎使用FarTTS文本转语音系统。",
         "这是一个功能强大的TTS工具库。",
         "支持多种开源TTS引擎和字幕格式。",
     ]
@@ -106,7 +106,7 @@ def demo_speaker_merge():
         if response.success:
             responses.append(response)
             speaker_names.append(speaker)
-            print(f"  ✓ 合成成功")
+            print("  ✓ 合成成功")
         else:
             print(f"  ✗ 合成失败: {response.error_message}")
 
@@ -115,7 +115,7 @@ def demo_speaker_merge():
         return
 
     # 使用带说话者信息的合并
-    from funtts.utils.response_utils import merge_tts_responses_with_speakers
+    from fartts.utils.response_utils import merge_tts_responses_with_speakers
 
     print(f"\n正在合并对话，说话者: {speaker_names}")
     merged_response = merge_tts_responses_with_speakers(
@@ -176,11 +176,11 @@ def demo_subtitle_operations():
     """演示字幕操作"""
     print("\n=== 字幕操作演示 ===")
 
-    from funtts.models import SubtitleMaker, AudioSegment
-    from funtts.utils.subtitle_utils import (
+    from fartts.models import SubtitleMaker
+    from fartts.utils.subtitle_utils import (
+        adjust_subtitle_timing,
         merge_subtitle_makers,
         split_subtitle_maker_by_speaker,
-        adjust_subtitle_timing,
     )
 
     # 创建示例字幕
@@ -239,7 +239,7 @@ def cleanup_temp_files():
 
 def main():
     """主函数"""
-    print("FunTTS工具函数演示")
+    print("FarTTS工具函数演示")
     print("=" * 50)
 
     try:

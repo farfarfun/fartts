@@ -1,13 +1,13 @@
 # TTS引擎开发规范
 
-本文档定义了FunTTS项目中TTS引擎的开发规范和标准化结构。
+本文档定义了FarTTS项目中TTS引擎的开发规范和标准化结构。
 
 ## 📋 目录结构规范
 
 每个TTS引擎必须遵循以下目录结构：
 
 ```
-src/funtts/tts/{engine_name}/
+src/fartts/tts/{engine_name}/
 ├── __init__.py          # 模块初始化，导出主要类
 ├── tts.py              # TTS引擎实现（必需）
 ├── README.md           # 引擎说明文档（必需）
@@ -47,12 +47,12 @@ class edge_tts(BaseTTS):     # ❌ 错误
 """
 
 from typing import List, Optional
-from funutil import getLogger
+from farlog import getLogger
 
 from ...base import BaseTTS
 from ...models import TTSRequest, TTSResponse, VoiceInfo
 
-logger = getLogger("funtts.tts.{engine_name}")
+logger = getLogger("fartts.tts.{engine_name}")
 ```
 
 ### 3. 类实现规范
@@ -223,7 +223,7 @@ def synthesize(self, request: TTSRequest) -> TTSResponse:
 
 ```python
 # 使用统一的日志记录器
-logger = getLogger("funtts.tts.{engine_name}")
+logger = getLogger("fartts.tts.{engine_name}")
 
 # 日志级别使用规范
 logger.debug("调试信息：详细的执行过程")
@@ -285,7 +285,7 @@ config = {"param1": "value1", "param2": "value2"}
 ### 基本使用
 
 ```python
-from funtts import TTSFactory, TTSRequest
+from fartts import TTSFactory, TTSRequest
 
 # 创建引擎实例
 tts = TTSFactory.create_tts("{engine_name}", "voice_name")
@@ -372,7 +372,7 @@ __all__ = ["{EngineName}TTS"]
 
 1. **创建引擎目录**
    ```bash
-   mkdir -p src/funtts/tts/{engine_name}
+   mkdir -p src/fartts/tts/{engine_name}
    ```
 
 2. **实现核心文件**
@@ -381,7 +381,7 @@ __all__ = ["{EngineName}TTS"]
    - 创建`__init__.py`导出文件
 
 3. **注册引擎**
-   在`src/funtts/factory.py`中注册新引擎：
+   在`src/fartts/factory.py`中注册新引擎：
    ```python
    from .tts.{engine_name} import {EngineName}TTS
    
@@ -404,9 +404,9 @@ __all__ = ["{EngineName}TTS"]
 ## 📚 参考示例
 
 参考现有的引擎实现：
-- `src/funtts/tts/edge/` - Edge TTS实现
-- `src/funtts/tts/azure/` - Azure TTS实现
-- `src/funtts/tts/espeak/` - eSpeak实现
-- `src/funtts/tts/pyttsx3/` - pyttsx3实现
+- `src/fartts/tts/edge/` - Edge TTS实现
+- `src/fartts/tts/azure/` - Azure TTS实现
+- `src/fartts/tts/espeak/` - eSpeak实现
+- `src/fartts/tts/pyttsx3/` - pyttsx3实现
 
 遵循这些规范可以确保所有TTS引擎具有一致的接口和良好的可维护性。

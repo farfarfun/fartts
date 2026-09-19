@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-FunTTS基本使用示例
+FarTTS基本使用示例
 演示如何使用统一接口切换不同的TTS引擎
 """
 
 import os
 
-from funtts import create_tts, get_available_engines, TTSFactory
+from fartts import TTSFactory, create_tts, get_available_engines
 
 
 def main():
     """主函数"""
-    print("=== FunTTS 基本使用示例 ===\n")
+    print("=== FarTTS 基本使用示例 ===\n")
 
     # 1. 查看可用的TTS引擎
     print("1. 可用的TTS引擎:")
