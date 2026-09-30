@@ -29,7 +29,7 @@ class TTSFactory:
     _instances: dict[str, BaseTTS] = {}
 
     @classmethod
-    def register_engine(cls, engine_name: str, engine_class: type[BaseTTS]):
+    def register_engine(cls, engine_name: str, engine_class: type[BaseTTS]) -> None:
         """注册TTS引擎
 
         Args:
@@ -54,7 +54,7 @@ class TTSFactory:
         engine_name: str,
         voice_name: str,
         config: dict[str, Any] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> BaseTTS:
         """创建TTS引擎实例
 
@@ -96,7 +96,7 @@ class TTSFactory:
         engine_name: str,
         voice_name: str,
         config: dict[str, Any] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> BaseTTS:
         """获取或创建TTS引擎实例（单例模式）
 
@@ -119,7 +119,7 @@ class TTSFactory:
         return cls._instances[instance_key]
 
     @classmethod
-    def clear_instances(cls):
+    def clear_instances(cls) -> None:
         """清除所有缓存的实例"""
         cls._instances.clear()
         logger.info("已清除所有TTS引擎实例缓存")
@@ -148,7 +148,7 @@ class TTSFactory:
 
 
 # 自动注册已有的TTS引擎
-def _auto_register_engines():
+def _auto_register_engines() -> None:
     """自动注册可用的TTS引擎"""
     try:
         from fartts.tts.edge import EdgeTTS

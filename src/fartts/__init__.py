@@ -1,3 +1,5 @@
+from typing import Any
+
 from .base import BaseTTS
 from .config import TTSConfig, get_config
 from .factory import TTSEngine, TTSFactory
@@ -81,7 +83,12 @@ __all__ = [
 
 
 # 便捷函数
-def create_tts(engine_name=None, voice_name=None, config=None, **kwargs):
+def create_tts(
+    engine_name: str | None = None,
+    voice_name: str | None = None,
+    config: dict[str, Any] | None = None,
+    **kwargs: Any,
+) -> BaseTTS:
     """创建TTS实例的便捷函数
 
     Args:
@@ -107,7 +114,7 @@ def create_tts(engine_name=None, voice_name=None, config=None, **kwargs):
     return TTSFactory.create_tts(engine_name, voice_name, config, **kwargs)
 
 
-def get_available_engines():
+def get_available_engines() -> list[str]:
     """获取可用的TTS引擎列表
 
     Returns:

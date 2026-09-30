@@ -202,9 +202,11 @@ config.set_default_voice("zh-CN-XiaoxiaoNeural")
 config.set_default_rate(1.2)
 
 # 设置引擎特定配置
-config.set_engine_config(
-    "azure", {"subscription_key": "your-api-key", "region": "eastus"}
-)
+config.set_engine_config("azure", {"service_region": "eastus"})
+
+# Azure 凭据仅通过环境变量提供，不会写入配置文件
+# export AZURE_SPEECH_KEY="..."
+# export AZURE_SPEECH_REGION="eastus"
 
 # 保存配置
 config.save_config()
@@ -586,7 +588,7 @@ mypy src/
 
 1. **Fork** 本仓库
 2. **创建** 功能分支 (`git checkout -b feature/AmazingFeature`)
-3. **提交** 更改 (`git commit -m 'Add some AmazingFeature'`)
+3. **提交** 更改 (`git commit -m 'feat: 增加新的语音引擎'`)
 4. **推送** 到分支 (`git push origin feature/AmazingFeature`)
 5. **打开** Pull Request
 
@@ -601,6 +603,7 @@ mypy src/
 ### 开发规范
 
 - 遵循PEP 8代码规范
+- 提交信息使用中文，并采用 `<类型>: <做了什么>` 格式（如 `fix: 修复配置加载错误`）
 - 添加适当的类型注解
 - 编写清晰的文档字符串
 - 为新功能添加测试用例

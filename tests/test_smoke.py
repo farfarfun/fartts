@@ -303,10 +303,7 @@ def test_tts_config_uses_isolated_file(tmp_path):
     assert cfg.get_default_engine() == "edge"
     cfg.set_default_engine("azure")
     assert cfg.get_default_engine() == "azure"
-    assert cfg.get_engine_config("azure") == {
-        "subscription_key": "",
-        "region": "eastus",
-    }
+    assert cfg.get_engine_config("azure") == {"service_region": "eastus"}
 
 
 def test_create_tts_convenience_function_uses_isolated_config(tmp_path, monkeypatch):

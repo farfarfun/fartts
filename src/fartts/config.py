@@ -13,10 +13,14 @@ from farlog import getLogger
 logger = getLogger("fartts")
 
 
+class ConfigError(RuntimeError):
+    """配置文件读取或写入失败。"""
+
+
 class TTSConfig:
     """TTS配置管理类"""
 
-    def __init__(self, config_file: str | None = None):
+    def __init__(self, config_file: str | None = None) -> None:
         """初始化配置管理器
 
         Args:
@@ -30,21 +34,38 @@ class TTSConfig:
         self._config: dict[str, Any] = {}
         self._load_config()
 
-    def _load_config(self):
+    def _load_config(self) -> None:
         """加载配置文件"""
         try:
             if os.path.exists(self.config_file):
                 with open(self.config_file, encoding="utf-8") as f:
                     self._config = json.load(f)
+                if not isinstance(self._config, dict):
+                    raise TypeError("配置文件根节点必须是 JSON 对象")
+
+                azure_config = (
+                    self._config.get("engines", {}).get("azure", {}).get("config", {})
+                )
+                removed_keys = []
+                if isinstance(azure_config, dict):
+                    for key in ("subscription_key", "speech_key"):
+                        if key in azure_config:
+                            azure_config.pop(key)
+                            removed_keys.append(key)
+                if removed_keys:
+                    self.save_config()
+                    logger.warning(
+                        "已从配置文件移除 Azure 凭据，请改用环境变量: "
+                        + ", ".join(removed_keys)
+                    )
                 logger.info(f"配置文件加载成功: {self.config_file}")
             else:
                 # 创建默认配置
                 self._config = self._get_default_config()
                 self.save_config()
                 logger.info(f"创建默认配置文件: {self.config_file}")
-        except Exception as e:
-            logger.error(f"配置文件加载失败: {str(e)}")
-            self._config = self._get_default_config()
+        except (OSError, UnicodeError, json.JSONDecodeError, TypeError) as e:
+            raise ConfigError(f"无法加载配置文件 {self.config_file}: {e}") from e
 
     def _get_default_config(self) -> dict[str, Any]:
         """获取默认配置"""
@@ -56,7 +77,7 @@ class TTSConfig:
                 "edge": {"enabled": True, "config": {}},
                 "azure": {
                     "enabled": True,
-                    "config": {"subscription_key": "", "region": "eastus"},
+                    "config": {"service_region": "eastus"},
                 },
                 "espeak": {"enabled": True, "config": {"executable_path": "espeak"}},
                 "pyttsx3": {"enabled": True, "config": {"volume": 1.0}},
@@ -65,7 +86,7 @@ class TTSConfig:
             "subtitle": {"enabled": True, "format": "srt", "encoding": "utf-8"},
         }
 
-    def save_config(self):
+    def save_config(self) -> None:
         """保存配置到文件"""
         try:
             # 确保配置目录存在
@@ -75,8 +96,8 @@ class TTSConfig:
                 json.dump(self._config, f, indent=2, ensure_ascii=False)
 
             logger.info(f"配置文件保存成功: {self.config_file}")
-        except Exception as e:
-            logger.error(f"配置文件保存失败: {str(e)}")
+        except (OSError, TypeError, ValueError) as e:
+            raise ConfigError(f"无法保存配置文件 {self.config_file}: {e}") from e
 
     def get(self, key: str, default: Any = None) -> Any:
         """获取配置值
@@ -98,7 +119,7 @@ class TTSConfig:
         except (KeyError, TypeError):
             return default
 
-    def set(self, key: str, value: Any):
+    def set(self, key: str, value: Any) -> None:
         """设置配置值
 
         Args:
@@ -106,6 +127,8 @@ class TTSConfig:
             value: 配置值
         """
         keys = key.split(".")
+        if keys[-1].lower() in {"subscription_key", "speech_key"}:
+            raise ValueError("凭据不能写入配置文件，请使用 AZURE_SPEECH_KEY 环境变量")
         config = self._config
 
         # 创建嵌套字典结构
@@ -115,7 +138,7 @@ class TTSConfig:
             config = config[k]
 
         config[keys[-1]] = value
-        logger.info(f"配置已更新: {key} = {value}")
+        logger.info(f"配置已更新: {key}")
 
     def get_engine_config(self, engine_name: str) -> dict[str, Any]:
         """获取特定引擎的配置
@@ -128,13 +151,20 @@ class TTSConfig:
         """
         return self.get(f"engines.{engine_name}.config", {})
 
-    def set_engine_config(self, engine_name: str, config: dict[str, Any]):
+    def set_engine_config(self, engine_name: str, config: dict[str, Any]) -> None:
         """设置特定引擎的配置
 
         Args:
             engine_name: 引擎名称
             config: 引擎配置
         """
+        secret_keys = {"subscription_key", "speech_key"}
+        forbidden = secret_keys.intersection(config)
+        if forbidden:
+            names = ", ".join(sorted(forbidden))
+            raise ValueError(
+                f"凭据不能写入配置文件 ({names})，请使用 AZURE_SPEECH_KEY 环境变量"
+            )
         self.set(f"engines.{engine_name}.config", config)
 
     def is_engine_enabled(self, engine_name: str) -> bool:
@@ -148,7 +178,7 @@ class TTSConfig:
         """
         return self.get(f"engines.{engine_name}.enabled", False)
 
-    def enable_engine(self, engine_name: str, enabled: bool = True):
+    def enable_engine(self, engine_name: str, enabled: bool = True) -> None:
         """启用或禁用引擎
 
         Args:
@@ -161,7 +191,7 @@ class TTSConfig:
         """获取默认引擎"""
         return self.get("default_engine", "edge")
 
-    def set_default_engine(self, engine_name: str):
+    def set_default_engine(self, engine_name: str) -> None:
         """设置默认引擎"""
         self.set("default_engine", engine_name)
 
@@ -169,7 +199,7 @@ class TTSConfig:
         """获取默认语音"""
         return self.get("default_voice", "zh-CN-XiaoxiaoNeural")
 
-    def set_default_voice(self, voice_name: str):
+    def set_default_voice(self, voice_name: str) -> None:
         """设置默认语音"""
         self.set("default_voice", voice_name)
 
@@ -177,7 +207,7 @@ class TTSConfig:
         """获取默认语音速率"""
         return self.get("default_rate", 1.0)
 
-    def set_default_rate(self, rate: float):
+    def set_default_rate(self, rate: float) -> None:
         """设置默认语音速率"""
         self.set("default_rate", rate)
 
@@ -194,7 +224,7 @@ def get_config() -> TTSConfig:
     return _global_config
 
 
-def set_config_file(config_file: str):
+def set_config_file(config_file: str) -> None:
     """设置配置文件路径"""
     global _global_config
     _global_config = TTSConfig(config_file)
