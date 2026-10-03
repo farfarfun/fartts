@@ -46,12 +46,12 @@ librosa>=0.9.0
 ### 基础安装
 ```bash
 # 安装FarTTS和IndexTTS2支持
-pip install fartts[indextts2]
+pip install "fartts[indextts]"
 ```
 
 ### 完整安装
 ```bash
-# 安装所有TTS引擎
+# 安装标准引擎集合（不包含 IndexTTS）
 pip install fartts[all]
 ```
 

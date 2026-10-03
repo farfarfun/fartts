@@ -1,5 +1,7 @@
 # Coqui TTS引擎
 
+> Coqui TTS 目前未作为 FarTTS 的可安装或已注册引擎提供，原因是 Python 版本兼容性限制。本文仅保留 Coqui TTS 的参考资料；`coqui` extra 不存在，且 `fartts[all]` 不包含它。
+
 Coqui TTS是一个功能强大的深度学习文本转语音工具包，支持多种先进的TTS模型架构。该引擎提供高质量的语音合成、语音克隆功能，并支持多种语言和自定义模型训练。
 
 ## 概述
@@ -42,17 +44,9 @@ espeak-ng  # 用于某些模型的音素处理
 
 ## 安装
 
-### 基础安装
-```bash
-# 安装FarTTS和Coqui TTS支持
-pip install fartts[coqui]
-```
+### FarTTS 支持状态
 
-### 完整安装
-```bash
-# 安装所有TTS引擎
-pip install fartts[all]
-```
+Coqui TTS 当前不是 FarTTS 可用的 extra，且不包含在 `fartts[all]` 中。
 
 ### 手动安装依赖
 ```bash

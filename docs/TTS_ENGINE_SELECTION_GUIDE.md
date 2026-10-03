@@ -88,10 +88,7 @@ pip install fartts[azure]
 - 多语言项目
 - 语音克隆应用
 
-**安装:**
-```bash
-pip install fartts[coqui]
-```
+**当前状态:** Coqui TTS 因 Python 版本兼容性问题尚未作为 FarTTS 的可安装引擎提供。
 
 ### 4. Bark TTS 🎭 **创意特效**
 
@@ -162,7 +159,7 @@ pip install fartts[tortoise]
 
 **安装:**
 ```bash
-pip install fartts[indextts2]
+pip install "fartts[indextts]"
 ```
 
 ### 7. KittenTTS 🐱 **神经网络**

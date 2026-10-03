@@ -1,4 +1,10 @@
+from importlib.metadata import PackageNotFoundError, version
 from typing import Any
+
+try:
+    __version__ = version("fartts")
+except PackageNotFoundError:
+    __version__ = "0.1.21"
 
 from .base import BaseTTS
 from .config import TTSConfig, get_config
