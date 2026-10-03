@@ -20,14 +20,11 @@
 ### 1. 基础安装
 
 ```bash
-# 创建虚拟环境（推荐）
-python -m venv fartts-env
+# 创建虚拟环境并安装默认的 Edge TTS 引擎
+uv venv fartts-env
 source fartts-env/bin/activate  # Linux/macOS
 # 或 fartts-env\Scripts\activate  # Windows
-
-# 安装基础包
-pip install --upgrade pip
-pip install fartts
+uv pip install "fartts[edge]"
 ```
 
 ### 2. 验证安装
@@ -45,7 +42,7 @@ print(f"可用引擎: {fartts.get_available_engines()}")
 
 ```bash
 # 安装Edge TTS
-pip install fartts[edge]
+uv pip install "fartts[edge]"
 
 # 验证安装
 python -c "from fartts.tts.edge import EdgeTTS; print('Edge TTS安装成功')"
@@ -61,7 +58,7 @@ python -c "from fartts.tts.edge import EdgeTTS; print('Edge TTS安装成功')"
 
 ```bash
 # 安装Azure TTS
-pip install fartts[azure]
+uv pip install "fartts[azure]"
 
 # 设置API密钥
 export AZURE_SPEECH_KEY="your-api-key"
@@ -87,7 +84,7 @@ print(f"可用语音数量: {len(voices)}")
 
 ```bash
 # 安装Bark TTS
-pip install fartts[bark]
+uv pip install "fartts[bark]"
 
 # 首次运行会自动下载模型（需要网络连接）
 python -c "from fartts.tts.bark import BarkTTS; BarkTTS()"
@@ -103,7 +100,7 @@ python -c "from fartts.tts.bark import BarkTTS; BarkTTS()"
 
 ```bash
 # 安装Tortoise TTS
-pip install fartts[tortoise]
+uv pip install "fartts[tortoise]"
 
 # 首次运行会下载模型
 python -c "from fartts.tts.tortoise import TortoiseTTS; TortoiseTTS()"
@@ -119,21 +116,21 @@ python -c "from fartts.tts.tortoise import TortoiseTTS; TortoiseTTS()"
 
 ```bash
 # 安装IndexTTS2
-pip install fartts[indextts2]
+uv pip install "fartts[indextts]"
 ```
 
 ### KittenTTS (神经网络)
 
 ```bash
 # 安装KittenTTS
-pip install fartts[kitten]
+uv pip install "fartts[kitten]"
 ```
 
 ### eSpeak (轻量级)
 
 ```bash
 # 安装eSpeak
-pip install fartts[espeak]
+uv pip install "fartts[espeak]"
 
 # Linux系统需要额外安装系统包
 sudo apt-get install espeak espeak-data  # Ubuntu/Debian
@@ -145,7 +142,7 @@ brew install espeak                      # macOS
 
 ```bash
 # 安装pyttsx3
-pip install fartts[pyttsx3]
+uv pip install "fartts[pyttsx3]"
 
 # 使用系统内置TTS引擎，无需额外配置
 ```
@@ -153,8 +150,8 @@ pip install fartts[pyttsx3]
 ### 完整安装
 
 ```bash
-# 安装所有支持的TTS引擎
-pip install fartts[all]
+# 安装标准引擎集合（IndexTTS 需单独安装）
+uv pip install "fartts[all]"
 ```
 
 ## 🐳 Docker部署
@@ -202,7 +199,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install torch torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 # 安装FarTTS (包含GPU支持的引擎)
-RUN pip3 install fartts[bark,tortoise,indextts2,kitten]
+RUN pip3 install "fartts[bark,tortoise,indextts,kitten]"
 
 WORKDIR /app
 COPY . .
@@ -237,64 +234,29 @@ services:
 
 ## 🔧 环境配置
 
-### 环境变量
+### Azure TTS 环境变量
 
-创建 `.env` 文件：
+Azure 凭据只从环境变量读取：
 
 ```bash
-# Azure TTS配置
 AZURE_SPEECH_KEY=your-azure-speech-key
 AZURE_SPEECH_REGION=your-azure-region
-
-# 日志配置
-FUNTTS_LOG_LEVEL=INFO
-FUNTTS_LOG_FILE=./logs/fartts.log
-
-# 缓存配置
-FUNTTS_CACHE_DIR=./cache
-FUNTTS_OUTPUT_DIR=./output
-
-# GPU配置
-CUDA_VISIBLE_DEVICES=0
 ```
 
 ### 配置文件
 
-创建 `fartts_config.yaml`:
+FarTTS 使用 JSON 配置文件，默认路径为 `~/.fartts/config.json`。例如：
 
-```yaml
-# FarTTS配置文件
-default_engine: "edge"
-default_voice: "zh-CN-XiaoxiaoNeural"
-
-engines:
-  edge:
-    timeout: 30
-    retry_count: 3
-  
-  azure:
-    subscription_key: "${AZURE_SPEECH_KEY}"
-    region: "${AZURE_SPEECH_REGION}"
-    timeout: 30
-  
-  bark:
-    device: "auto"
-    use_small_models: false
-    text_temp: 0.7
-    waveform_temp: 0.7
-  
-  tortoise:
-    preset: "standard"
-    device: "auto"
-
-output:
-  audio_format: "wav"
-  sample_rate: 22050
-  subtitle_format: "srt"
-
-logging:
-  level: "INFO"
-  file: "./logs/fartts.log"
+```json
+{
+  "default_engine": "edge",
+  "default_voice": "zh-CN-XiaoxiaoNeural",
+  "default_rate": 1.0,
+  "engines": {
+    "edge": {"enabled": true, "config": {}},
+    "azure": {"enabled": true, "config": {"service_region": "eastus"}}
+  }
+}
 ```
 
 ## 🧪 测试安装
@@ -491,10 +453,10 @@ tts = BarkTTS(use_small_models=True)
 pip show fartts
 
 # 升级到最新版本
-pip install --upgrade fartts
+uv pip install --upgrade fartts
 
 # 升级特定引擎
-pip install --upgrade fartts[edge,azure]
+uv pip install --upgrade "fartts[edge,azure]"
 ```
 
 ### 配置迁移
@@ -505,12 +467,7 @@ pip install --upgrade fartts[edge,azure]
 
 ### 1. 缓存配置
 
-```python
-# 启用模型缓存
-import os
-
-os.environ["FUNTTS_CACHE_DIR"] = "./cache"
-```
+FarTTS 当前没有缓存目录环境变量；各引擎的模型缓存设置请参阅其各自的文档。
 
 ### 2. 并发处理
 

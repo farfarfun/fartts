@@ -68,8 +68,8 @@ FarTTS是一个现代化的Python文本转语音(TTS)库，提供统一的接口
 ### 基础安装
 
 ```bash
-# 基础功能安装
-pip install fartts
+# 安装默认的 Edge TTS 引擎
+pip install "fartts[edge]"
 ```
 
 ### 按需安装引擎
@@ -83,8 +83,7 @@ pip install fartts[edge]
 # Azure TTS (需要API密钥)
 pip install fartts[azure]
 
-# Coqui TTS (暂时禁用，Python版本兼容性问题)
-# pip install fartts[coqui]
+# Coqui TTS 暂时禁用（Python版本兼容性问题）
 
 # Bark TTS (支持非语言声音和音乐生成)
 pip install fartts[bark]
@@ -93,7 +92,7 @@ pip install fartts[bark]
 pip install fartts[tortoise]
 
 # IndexTTS2 (工业级TTS，支持情感控制)
-pip install fartts[indextts2]
+pip install "fartts[indextts]"
 
 # KittenTTS (深度学习TTS，需要GPU支持)
 pip install fartts[kitten]
@@ -138,8 +137,8 @@ brew install ffmpeg
 ```python
 from fartts import create_tts, TTSRequest
 
-# 使用默认配置创建TTS实例
-tts = create_tts()
+# 使用已安装的 Edge TTS 引擎创建实例
+tts = create_tts(engine_name="edge")
 
 # 方式1：简单调用（兼容旧版本）
 tts.create_tts(
@@ -566,18 +565,15 @@ custom_tts = TTSFactory.create_tts("mycustom", "custom_voice_1")
 git clone https://github.com/farfarfun/fartts.git
 cd fartts
 
-# 安装开发依赖
-pip install -e .[all]
+# 安装开发依赖和所有受支持的引擎
+uv sync --all-extras --group dev
 
 # 运行测试
-python -m pytest tests/
+uv run pytest tests/
 
 # 代码格式化
-ruff check --fix .
-ruff format .
-
-# 类型检查
-mypy src/
+uv run ruff check --fix .
+uv run ruff format .
 ```
 
 ## 🤝 贡献指南
