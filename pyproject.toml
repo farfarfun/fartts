@@ -8,9 +8,9 @@ version = "0.1.21"
 description = "统一的文本转语音(TTS)工具库，支持多种开源TTS引擎和字幕格式"
 readme = "README.md"
 keywords = [ "tts", "text-to-speech", "audio", "subtitle", "speech-synthesis",]
-classifiers = ["Development Status :: 4 - Beta", "Intended Audience :: Developers", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Topic :: Multimedia :: Sound/Audio :: Speech", "Topic :: Software Development :: Libraries :: Python Modules", "Typing :: Typed"]
+classifiers = ["Development Status :: 4 - Beta", "Intended Audience :: Developers", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13", "Topic :: Multimedia :: Sound/Audio :: Speech", "Topic :: Software Development :: Libraries :: Python Modules", "Typing :: Typed"]
 requires-python = ">=3.10"
-dependencies = [ "farlog>=1.1.7", "funutil>=0.1.0", "pydub>=0.25.0", "ffmpeg-python>=0.2.0",]
+dependencies = [ "farlog>=1.1.7", "funutil>=0.1.0", "pydub>=0.25.0", "ffmpeg-python>=0.2.0", "audioop-lts>=0.2.1; python_version >= '3.13'",]
 license = "MIT"
 license-files = ["LICENSE"]
 [[project.authors]]

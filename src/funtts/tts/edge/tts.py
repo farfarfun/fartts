@@ -29,6 +29,20 @@ def convert_rate_to_percent(rate: float) -> str:
         return f"{percent}%"
 
 
+def convert_volume_to_percent(volume: float) -> str:
+    """将 0.0-1.0 的音量转换为 Edge TTS 的相对百分比格式"""
+    return f"{round((volume - 1.0) * 100):+d}%"
+
+
+def convert_pitch_to_hz(pitch: float) -> str:
+    """将 0.5-2.0 的音调倍数转换为 Edge TTS 的 Hz 偏移格式
+
+    Edge TTS 的 pitch 只接受 ``+NHz`` / ``-NHz``，不接受百分比。
+    以常见基频 100Hz 为基准做线性换算。
+    """
+    return f"{round((pitch - 1.0) * 100):+d}Hz"
+
+
 class EdgeTTS(BaseTTS):
     """
     Microsoft Edge TTS引擎
@@ -115,14 +129,25 @@ class EdgeTTS(BaseTTS):
 
         try:
             rate_str = convert_rate_to_percent(request.voice_rate)
+            volume_str = convert_volume_to_percent(request.voice_volume)
+            pitch_str = convert_pitch_to_hz(request.voice_pitch)
             voice_name = request.voice_name or self.get_default_voice()
-            communicate = Communicate(text, voice_name, rate=rate_str)
+            communicate = Communicate(
+                text,
+                voice_name,
+                rate=rate_str,
+                volume=volume_str,
+                pitch=pitch_str,
+            )
             edge_sub_maker = EdgeSubMaker()
 
             # 创建我们自己的字幕制作器
             subtitle_maker = SubtitleMaker() if request.generate_subtitles else None
 
-            logger.info(f"开始Edge TTS合成: voice={voice_name}, rate={rate_str}")
+            logger.info(
+                f"开始Edge TTS合成: voice={voice_name}, rate={rate_str}, "
+                f"volume={volume_str}, pitch={pitch_str}"
+            )
 
             with open(voice_file, "wb") as file:
                 for chunk in communicate.stream_sync():

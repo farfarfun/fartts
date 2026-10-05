@@ -5,6 +5,7 @@ Azure TTS引擎实现
 
 import os
 import time
+from xml.sax.saxutils import escape as xml_escape
 
 from farlog import getLogger
 
@@ -133,19 +134,35 @@ class AzureTTS(BaseTTS):
                 speech_config=speech_config, audio_config=audio_config
             )
 
-            # 构建SSML（如果需要调整语音速率）
+            # 构建SSML（速率/音调/音量任一偏离默认值时都需要走SSML）
+            prosody_attrs = []
             if request.voice_rate != 1.0:
-                rate_percent = f"{int((request.voice_rate - 1.0) * 100):+d}%"
-                ssml = f"""
+                # 用 round 而不是 int：int 对负数是朝零截断，且浮点误差会让
+                # 0.7 这类取值算出 -29% 而不是 -30%
+                prosody_attrs.append(
+                    f'rate="{round((request.voice_rate - 1.0) * 100):+d}%"'
+                )
+            if request.voice_pitch != 1.0:
+                prosody_attrs.append(
+                    f'pitch="{round((request.voice_pitch - 1.0) * 100):+d}%"'
+                )
+            if request.voice_volume != 1.0:
+                # SSML volume 取 0-100 的绝对值，voice_volume 定义域是 0.0-1.0
+                prosody_attrs.append(
+                    f'volume="{max(0, min(100, round(request.voice_volume * 100)))}"'
+                )
+
+            if prosody_attrs:
+                escaped_text = xml_escape(request.text)
+                text_to_speak = f"""
                 <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-CN">
                     <voice name="{voice_name}">
-                        <prosody rate="{rate_percent}">
-                            {request.text}
+                        <prosody {" ".join(prosody_attrs)}>
+                            {escaped_text}
                         </prosody>
                     </voice>
                 </speak>
                 """
-                text_to_speak = ssml
                 is_ssml = True
             else:
                 text_to_speak = request.text

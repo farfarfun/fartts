@@ -364,7 +364,7 @@ def test_no_broken_console_script_entry_point():
     """
     from importlib.metadata import distribution
 
-    scripts = distribution("funtts").entry_points.select(group="console_scripts")
+    scripts = distribution("funtts-plus").entry_points.select(group="console_scripts")
     for script in scripts:
         module = script.value.split(":", 1)[0]
         try:

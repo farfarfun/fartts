@@ -143,8 +143,9 @@ class Pyttsx3TTS(BaseTTS):
             if not output_file:
                 output_file = tempfile.mktemp(suffix=".wav")
 
-            # 确保输出目录存在
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
+            # 确保输出目录存在（相对文件名时 dirname 为空串，不能直接 makedirs）
+            output_dir = os.path.dirname(os.path.abspath(output_file))
+            os.makedirs(output_dir, exist_ok=True)
 
             # 设置语音参数
             self._configure_voice_parameters(request)
@@ -211,8 +212,8 @@ class Pyttsx3TTS(BaseTTS):
         rate = max(50, min(400, rate))  # 限制在合理范围内
         self.engine.setProperty("rate", rate)
 
-        # 设置音量
-        volume = min(1.0, max(0.0, self.volume))
+        # 设置音量：引擎级 volume 与请求级 voice_volume 相乘
+        volume = min(1.0, max(0.0, self.volume * request.voice_volume))
         self.engine.setProperty("volume", volume)
 
     def _get_current_voice_name(self) -> str:

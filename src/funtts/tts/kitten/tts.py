@@ -143,8 +143,9 @@ class KittenTTS(BaseTTS):
             if not output_file:
                 output_file = tempfile.mktemp(suffix=".wav")
 
-            # 确保输出目录存在
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
+            # 确保输出目录存在（相对文件名时 dirname 为空串，不能直接 makedirs）
+            output_dir = os.path.dirname(os.path.abspath(output_file))
+            os.makedirs(output_dir, exist_ok=True)
 
             # 准备合成参数
             synthesis_params = self._prepare_synthesis_params(request)
@@ -218,7 +219,7 @@ class KittenTTS(BaseTTS):
         params = {
             "sample_rate": self.sample_rate,
             "speed": self.speed * request.voice_rate,
-            "pitch": self.pitch,
+            "pitch": self.pitch * request.voice_pitch,
         }
 
         # 输出格式映射

@@ -13,13 +13,18 @@ class BaseTTS(ABC):
     # ==================== 类变量 ====================
     supported_formats: list[str] = ["wav"]  # 子类可以重写
     supports_subtitles: bool = True  # 子类可以重写
+    voice_name: str | None = None  # 由 __init__ 赋值，未调用基类构造时保持 None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, voice_name: str | None = None, **kwargs: Any) -> None:
         """初始化TTS基类
 
-        子类可以根据需要重写此方法来处理特定的初始化参数
+        Args:
+            voice_name: 该引擎实例的默认语音名称，子类通过
+                ``super().__init__(voice_name, **kwargs)`` 传入
+            **kwargs: 子类特有的配置参数，基类不消费
         """
-        pass
+        self.voice_name = voice_name
+        self.engine_options: dict[str, Any] = dict(kwargs)
 
     # ==================== 核心抽象方法 ====================
 
@@ -66,11 +71,15 @@ class BaseTTS(ABC):
     def get_default_voice(self) -> str | None:
         """获取默认语音名称
 
-        默认实现返回语音列表的第一个，子类可以重写此方法自定义默认语音
+        优先返回构造时指定的 `voice_name`；未指定时才回退到语音列表的第一个。
+        子类可以重写此方法自定义默认语音。
 
         Returns:
             默认语音名称，如果没有可用语音则返回None
         """
+        if self.voice_name:
+            return self.voice_name
+
         try:
             voices = self.list_voices()
             return voices[0].name if voices else None
