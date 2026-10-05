@@ -175,13 +175,10 @@ class KittenTTS(BaseTTS):
             # 获取音频时长
             duration = self._calculate_audio_duration(audio_data)
 
-            # 生成字幕（如果需要）
-            subtitle_file = None
-            frt_subtitle_file = None
+            # 生成字幕（如果需要）：只产出 SubtitleMaker，落盘交给基类统一处理
+            subtitle_maker = None
             if request.generate_subtitles:
-                subtitle_file, frt_subtitle_file = self._generate_subtitles(
-                    request, output_file, duration
-                )
+                subtitle_maker = self._build_subtitle_maker(request, duration)
 
             logger.success(f"KittenTTS合成完成: {output_file} ({duration:.2f}s)")
 
@@ -189,8 +186,7 @@ class KittenTTS(BaseTTS):
                 success=True,
                 request=request,
                 audio_file=output_file,
-                subtitle_file=subtitle_file,
-                frt_subtitle_file=frt_subtitle_file,
+                subtitle_maker=subtitle_maker,
                 duration=duration,
                 voice_used=request.voice_name or self.voice_name,
                 processing_time=time.time() - start_time,
@@ -293,46 +289,33 @@ class KittenTTS(BaseTTS):
         except Exception:
             return 0.0
 
-    def _generate_subtitles(
-        self, request: TTSRequest, audio_file: str, duration: float
-    ):
-        """生成字幕文件
+    def _build_subtitle_maker(
+        self, request: TTSRequest, duration: float
+    ) -> SubtitleMaker:
+        """构建字幕数据
+
+        原实现有两处必然抛 TypeError 的调用，且被外层 `except Exception` 吞成
+        一行 error 日志后返回 (None, None)，表现为「字幕开关打开却永远没有字幕」：
+
+        - `AudioSegment(..., speaker=...)`：AudioSegment 上只有 `speaker_id`；
+        - `subtitle_maker.add_segment(segment)`：签名是
+          `add_segment(start_time, end_time, text)`，不接受 AudioSegment。
 
         Args:
             request: TTS请求对象
-            audio_file: 音频文件路径
             duration: 音频时长
 
         Returns:
-            (subtitle_file, frt_subtitle_file) 字幕文件路径元组
+            SubtitleMaker: 字幕数据，落盘由 BaseTTS.synthesize() 统一完成
         """
-        try:
-            subtitle_maker = SubtitleMaker()
-
-            # 创建音频段
-            segment = AudioSegment(
-                start_time=0.0,
-                end_time=duration,
-                text=request.text,
-                voice_name=request.voice_name or self.voice_name,
-                speaker=getattr(request, "speaker", None),
-            )
-            subtitle_maker.add_segment(segment)
-
-            # 生成字幕文件
-            base_name = os.path.splitext(audio_file)[0]
-            subtitle_file = f"{base_name}.srt"
-            frt_subtitle_file = f"{base_name}.frt"
-
-            # 保存字幕
-            subtitle_maker.save_srt(subtitle_file)
-            subtitle_maker.save_frt(frt_subtitle_file)
-
-            return subtitle_file, frt_subtitle_file
-
-        except Exception as e:
-            logger.error(f"生成字幕失败: {str(e)}")
-            return None, None
+        segment = AudioSegment(
+            start_time=0.0,
+            end_time=duration,
+            text=request.text,
+            voice_name=request.voice_name or self.voice_name,
+            speaker_id=getattr(request, "speaker_id", None),
+        )
+        return SubtitleMaker([segment])
 
     def list_voices(self, language: str | None = None) -> list[VoiceInfo]:
         """获取可用的语音列表

@@ -144,31 +144,22 @@ class TortoiseTTS(BaseTTS):
             # 获取音频时长
             duration = gen.shape[-1] / self.config["sample_rate"]
 
-            # 生成字幕
-            subtitle_file = None
-            frt_subtitle_file = None
-
-            if request.subtitle_format:
-                segments = [
-                    AudioSegment(
-                        text=request.text,
-                        start_time=0.0,
-                        end_time=duration,
-                        voice_name=voice_name,
-                    )
-                ]
-
-                subtitle_maker = SubtitleMaker(segments)
-
-                # 生成标准字幕
-                if "srt" in request.subtitle_format.lower():
-                    subtitle_file = output_dir / f"{base_name}.srt"
-                    subtitle_maker.save_srt(subtitle_file)
-
-                # 生成FRT字幕
-                if "frt" in request.subtitle_format.lower():
-                    frt_subtitle_file = output_dir / f"{base_name}.frt"
-                    subtitle_maker.save_frt(frt_subtitle_file)
+            # 生成字幕：只产出 SubtitleMaker，落盘统一交给 BaseTTS.synthesize()。
+            # 原实现拿 request.subtitle_format 本身当开关，而该字段默认是
+            # "srt"（恒为真），既忽略了 generate_subtitles 开关，又只认
+            # "srt"/"frt" 两个子串——subtitle_format="vtt" 时什么都不会写。
+            subtitle_maker = None
+            if request.generate_subtitles:
+                subtitle_maker = SubtitleMaker(
+                    [
+                        AudioSegment(
+                            text=request.text,
+                            start_time=0.0,
+                            end_time=duration,
+                            voice_name=voice_name,
+                        )
+                    ]
+                )
 
             synthesis_time = time.time() - start_time
             logger.success(f"Tortoise TTS语音合成完成，耗时: {synthesis_time:.2f}秒")
@@ -176,8 +167,7 @@ class TortoiseTTS(BaseTTS):
             return TTSResponse(
                 success=True,
                 audio_file=str(audio_file),
-                subtitle_file=str(subtitle_file) if subtitle_file else None,
-                frt_subtitle_file=str(frt_subtitle_file) if frt_subtitle_file else None,
+                subtitle_maker=subtitle_maker,
                 duration=duration,
                 voice_used=voice_name,
                 engine_info={

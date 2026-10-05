@@ -258,6 +258,53 @@ def test_builtin_engines_do_not_override_public_synthesize():
     )
 
 
+def test_kitten_builds_subtitle_maker_without_typeerror():
+    """原 KittenTTS._generate_subtitles 里 `AudioSegment(speaker=...)` 和
+    `add_segment(segment)` 两处调用必然抛 TypeError，被 except 吞掉后返回
+    (None, None)——字幕开关打开也永远没有字幕。"""
+    from funtts.tts.kitten.tts import KittenTTS
+
+    engine = KittenTTS.__new__(KittenTTS)  # 跳过会加载模型的 __init__
+    engine.voice_name = "kitten-voice"
+
+    maker = engine._build_subtitle_maker(TTSRequest(text="你好世界"), 2.5)
+
+    assert len(maker.get_segments()) == 1
+    segment = maker.get_segments()[0]
+    assert segment.text == "你好世界"
+    assert segment.end_time == 2.5
+    assert segment.voice_name == "kitten-voice"
+    assert maker.get_total_duration() == 2.5
+
+
+def test_heavy_engines_delegate_subtitle_writing_to_base():
+    """bark/coqui/tortoise/indextts2 此前用 `if request.subtitle_format:` 判断
+    （该字段默认 "srt"，恒为真），绕开 generate_subtitles 开关自己写 srt/frt，
+    且 subtitle_format="vtt" 时什么都不写。现在统一只产出 subtitle_maker。"""
+    import importlib
+    import inspect
+
+    offenders = []
+    for module_name, class_name in (
+        ("funtts.tts.bark.tts", "BarkTTS"),
+        ("funtts.tts.coqui.tts", "CoquiTTS"),
+        ("funtts.tts.tortoise.tts", "TortoiseTTS"),
+        ("funtts.tts.indextts2.tts", "IndexTTS2"),
+        ("funtts.tts.kitten.tts", "KittenTTS"),
+    ):
+        try:
+            module = importlib.import_module(module_name)
+        except ImportError:
+            continue
+        source = inspect.getsource(getattr(module, class_name))
+        if "save_srt(" in source or "save_frt(" in source:
+            offenders.append(f"{module_name}.{class_name}")
+        if "if request.subtitle_format:" in source:
+            offenders.append(f"{module_name}.{class_name} (subtitle_format 当开关)")
+
+    assert not offenders, f"以下引擎仍在自行写字幕文件: {offenders}"
+
+
 # ---------------------------------------------------------------------------
 # Edge 引擎的参数换算（纯函数，不触网）
 # ---------------------------------------------------------------------------
