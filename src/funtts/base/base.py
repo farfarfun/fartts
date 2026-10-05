@@ -1,3 +1,5 @@
+import os
+import shutil
 import time
 from abc import ABC, abstractmethod
 from typing import Any
@@ -185,14 +187,22 @@ class BaseTTS(ABC):
             response.processing_time = time.time() - start_time
             response.engine_info.update(self.get_engine_info())
 
-            # 处理输出文件
-            if response.success and request.output_file and response.audio_file:
-                if response.audio_file != request.output_file:
-                    # 复制文件到指定位置
-                    import shutil
+            # 处理输出文件：output_file 优先，其次 output_dir（并非所有引擎都
+            # 自行处理 output_dir，统一在基类兜底，保证两个字段对所有引擎生效）
+            if response.success and response.audio_file:
+                target_file = request.output_file
+                if not target_file and request.output_dir:
+                    target_file = os.path.join(
+                        request.output_dir, os.path.basename(response.audio_file)
+                    )
 
-                    shutil.copy2(response.audio_file, request.output_file)
-                    response.audio_file = request.output_file
+                if target_file and target_file != response.audio_file:
+                    # 复制文件到指定位置（目标目录可能尚不存在）
+                    os.makedirs(
+                        os.path.dirname(os.path.abspath(target_file)), exist_ok=True
+                    )
+                    shutil.copy2(response.audio_file, target_file)
+                    response.audio_file = target_file
 
             # 处理字幕文件
             if (

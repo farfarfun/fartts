@@ -52,7 +52,7 @@ def demo_voice_management():
             tts = TTSFactory.create_tts(engine_name, "default")
 
             # 获取可用语音
-            voices = tts.get_available_voices()
+            voices = tts.list_voices()
             print(f"可用语音数量: {len(voices)}")
 
             # 显示前5个语音
@@ -94,23 +94,22 @@ def demo_batch_processing():
 
         for i, text in enumerate(texts, 1):
             audio_file = os.path.join(output_dir, f"batch_{i}.wav")
-            subtitle_file = os.path.join(output_dir, f"batch_{i}.srt")
 
             print(f"正在处理第 {i} 段文本...")
 
             # 生成语音
-            tts.create_tts(
+            response = tts.synthesize_text(
                 text=text,
+                output_file=audio_file,
                 voice_rate=1.0,
-                voice_file=audio_file,
-                subtitle_file=subtitle_file,
+                generate_subtitles=True,
             )
 
-            if os.path.exists(audio_file):
+            if response.success and os.path.exists(audio_file):
                 size = os.path.getsize(audio_file)
                 print(f"  ✓ 生成成功: {audio_file} ({size} bytes)")
             else:
-                print(f"  ✗ 生成失败: {audio_file}")
+                print(f"  ✗ 生成失败: {audio_file} - {response.error_message}")
 
         print("批量处理完成")
 
@@ -154,31 +153,33 @@ def demo_engine_comparison():
 
             start_time = time.time()
 
-            sub_maker = tts.create_tts(
-                text=test_text, voice_rate=1.0, voice_file=audio_file
+            response = tts.synthesize_text(
+                text=test_text,
+                output_file=audio_file,
+                voice_rate=1.0,
+                generate_subtitles=True,
             )
 
             end_time = time.time()
             processing_time = end_time - start_time
 
             # 收集结果
-            if os.path.exists(audio_file):
+            if response.success and os.path.exists(audio_file):
                 file_size = os.path.getsize(audio_file)
-                duration = tts.get_audio_duration() if sub_maker else 0
 
                 results[engine_name] = {
                     "success": True,
                     "file_size": file_size,
-                    "duration": duration,
+                    "duration": response.duration,
                     "processing_time": processing_time,
-                    "supports_subtitles": sub_maker is not None,
+                    "supports_subtitles": response.subtitle_file is not None,
                 }
 
                 print("  ✓ 成功")
                 print(f"    文件大小: {file_size} bytes")
-                print(f"    音频时长: {duration:.2f} 秒")
+                print(f"    音频时长: {response.duration:.2f} 秒")
                 print(f"    处理时间: {processing_time:.2f} 秒")
-                print(f"    字幕支持: {'是' if sub_maker else '否'}")
+                print(f"    字幕支持: {'是' if response.subtitle_file else '否'}")
             else:
                 results[engine_name] = {"success": False}
                 print("  ✗ 失败")
@@ -216,31 +217,47 @@ def demo_custom_engine():
     """演示如何注册自定义TTS引擎"""
     print("=== 自定义引擎示例 ===")
 
+    import tempfile
+
     from funtts.base import BaseTTS
+    from funtts.models import TTSResponse, VoiceInfo
 
     class DemoTTS(BaseTTS):
-        """演示用的自定义TTS引擎"""
+        """演示用的自定义TTS引擎
 
-        def _tts(self, text, voice_rate, voice_file, *args, **kwargs):
-            # 这里只是演示，实际应该实现真正的TTS逻辑
-            print(f"DemoTTS: 正在处理文本 '{text[:20]}...'")
-            print(f"DemoTTS: 语音速率 {voice_rate}")
-            print(f"DemoTTS: 输出文件 {voice_file}")
+        自定义引擎只需实现两个抽象方法：`_synthesize` 和 `list_voices`。
+        参数校验、字幕落盘、耗时统计等由基类的 `synthesize()` 统一处理。
+        """
 
-            # 创建一个空的音频文件作为演示
-            with open(voice_file, "wb") as f:
+        supports_subtitles = False
+
+        def _synthesize(self, request) -> TTSResponse:
+            print(f"DemoTTS: 正在处理文本 '{request.text[:20]}...'")
+            print(f"DemoTTS: 语音速率 {request.voice_rate}")
+
+            output_file = request.output_file or tempfile.mktemp(suffix=".wav")
+            print(f"DemoTTS: 输出文件 {output_file}")
+
+            # 这里只是演示，实际应该调用真正的合成逻辑
+            with open(output_file, "wb") as f:
                 f.write(b"\x00" * 1024)  # 写入1KB的空数据
 
-            return None  # 不支持字幕
+            return TTSResponse(
+                success=True,
+                request=request,
+                audio_file=output_file,
+                duration=1.0,
+                voice_used=request.voice_name or self.voice_name,
+            )
 
-        def get_available_voices(self, language=None):
-            return [
-                {"name": "demo_voice_1", "language": "zh-CN", "gender": "female"},
-                {"name": "demo_voice_2", "language": "en-US", "gender": "male"},
+        def list_voices(self, language: str | None = None) -> list[VoiceInfo]:
+            voices = [
+                VoiceInfo(name="demo_voice_1", language="zh-CN", gender="female"),
+                VoiceInfo(name="demo_voice_2", language="en-US", gender="male"),
             ]
-
-        def is_voice_available(self, voice_name):
-            return voice_name in ["demo_voice_1", "demo_voice_2"]
+            if language:
+                voices = [v for v in voices if v.language == language]
+            return voices
 
     # 注册自定义引擎
     TTSFactory.register_engine("demo", DemoTTS)
@@ -253,15 +270,17 @@ def demo_custom_engine():
         demo_tts = TTSFactory.create_tts("demo", "demo_voice_1")
 
         output_file = "demo_output.wav"
-        demo_tts.create_tts(
-            text="这是自定义TTS引擎的测试", voice_rate=1.0, voice_file=output_file
+        response = demo_tts.synthesize_text(
+            text="这是自定义TTS引擎的测试",
+            output_file=output_file,
+            voice_rate=1.0,
         )
 
-        if os.path.exists(output_file):
+        if response.success and os.path.exists(output_file):
             print(f"✓ 自定义引擎测试成功: {output_file}")
             os.remove(output_file)  # 清理测试文件
         else:
-            print("✗ 自定义引擎测试失败")
+            print(f"✗ 自定义引擎测试失败: {response.error_message}")
 
     except Exception as e:
         print(f"自定义引擎测试出错: {e}")

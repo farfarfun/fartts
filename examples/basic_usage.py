@@ -46,30 +46,25 @@ def main():
 
             # 生成音频文件
             audio_file = os.path.join(output_dir, f"test_{engine_name}.wav")
-            subtitle_file = os.path.join(output_dir, f"test_{engine_name}.srt")
 
             print(f"   正在生成音频: {audio_file}")
-            sub_maker = tts.create_tts(
+            response = tts.synthesize_text(
                 text=test_text,
+                voice_name=voice_name,
+                output_file=audio_file,
                 voice_rate=1.0,
-                voice_file=audio_file,
-                subtitle_file=subtitle_file
-                if engine_name in ["edge", "azure"]
-                else None,
+                generate_subtitles=engine_name in ["edge", "azure"],
             )
 
-            if os.path.exists(audio_file):
+            if response.success and os.path.exists(audio_file):
                 file_size = os.path.getsize(audio_file)
                 print(f"   ✓ 音频生成成功，文件大小: {file_size} bytes")
+                print(f"   ✓ 音频时长: {response.duration:.2f} 秒")
 
-                if sub_maker:
-                    duration = tts.get_audio_duration()
-                    print(f"   ✓ 音频时长: {duration:.2f} 秒")
-
-                if os.path.exists(subtitle_file):
-                    print(f"   ✓ 字幕文件生成成功: {subtitle_file}")
+                if response.subtitle_file and os.path.exists(response.subtitle_file):
+                    print(f"   ✓ 字幕文件生成成功: {response.subtitle_file}")
             else:
-                print("   ✗ 音频生成失败")
+                print(f"   ✗ 音频生成失败: {response.error_message}")
 
         except Exception as e:
             print(f"   ✗ 测试失败: {e}")
@@ -80,7 +75,7 @@ def main():
     for engine_name in engines[:2]:  # 只测试前两个引擎
         try:
             tts = TTSFactory.create_tts(engine_name, "default")
-            voices = tts.get_available_voices()
+            voices = tts.list_voices()
             print(f"   {engine_name} 引擎可用语音数量: {len(voices)}")
             if voices:
                 print(f"   示例语音: {voices[0]}")

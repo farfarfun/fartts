@@ -140,12 +140,12 @@ from funtts import create_tts, TTSRequest
 # 使用已安装的 Edge TTS 引擎创建实例
 tts = create_tts(engine_name="edge")
 
-# 方式1：简单调用（兼容旧版本）
-tts.create_tts(
+# 方式1：便捷调用
+response = tts.synthesize_text(
     text="你好，这是一个TTS测试。",
+    output_file="output.wav",
     voice_rate=1.0,
-    voice_file="output.wav",
-    subtitle_file="output.srt",  # 可选，生成字幕文件
+    generate_subtitles=True,  # 可选，生成字幕文件
 )
 
 # 方式2：使用Request/Response模式（推荐）
@@ -220,10 +220,10 @@ from funtts import TTSFactory
 tts = TTSFactory.create_tts("edge", "zh-CN-XiaoxiaoNeural")
 
 # 获取所有可用语音
-voices = tts.get_available_voices()
+voices = tts.list_voices()
 
 # 获取中文语音
-chinese_voices = tts.get_available_voices(language="zh-CN")
+chinese_voices = tts.list_voices(language="zh-CN")
 
 # 检查语音是否可用
 is_available = tts.is_voice_available("zh-CN-XiaoxiaoNeural")
@@ -275,13 +275,18 @@ tts = create_tts(engine_name="edge")
 
 for i, text in enumerate(texts):
     audio_file = f"output_{i + 1}.wav"
-    subtitle_file = f"output_{i + 1}.srt"
 
-    tts.create_tts(
-        text=text, voice_rate=1.0, voice_file=audio_file, subtitle_file=subtitle_file
+    response = tts.synthesize_text(
+        text=text,
+        output_file=audio_file,
+        voice_rate=1.0,
+        generate_subtitles=True,
     )
 
-    print(f"生成完成: {audio_file}")
+    if response.success:
+        print(f"生成完成: {response.audio_file} / {response.subtitle_file}")
+    else:
+        print(f"生成失败: {response.error_message}")
 ```
 
 ## 配置文件
