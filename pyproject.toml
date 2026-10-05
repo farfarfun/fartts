@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fartts"
+name = "funtts-plus"
 version = "0.1.21"
 description = "统一的文本转语音(TTS)工具库，支持多种开源TTS引擎和字幕格式"
 readme = "README.md"
@@ -36,7 +36,7 @@ indextts = [ "indextts; python_version >= '3.10' and python_version < '3.13'",]
 kitten = [ "torch>=1.9.0", "torchaudio>=0.9.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
 espeak = []
 pyttsx3 = [ "pyttsx3>=2.90",]
-all = [ "fartts[edge,azure,bark,tortoise,kitten,espeak,pyttsx3]",]
+all = [ "funtts-plus[edge,azure,bark,tortoise,kitten,espeak,pyttsx3]",]
 
 [project.urls]
 Organization = "https://github.com/farfarfun"
@@ -44,7 +44,7 @@ Repository = "https://github.com/farfarfun/fartts"
 Releases = "https://github.com/farfarfun/fartts/releases"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/fartts"]
+packages = ["src/funtts"]
 
 [tool.uv.sources.indextts]
 git = "https://github.com/index-tts/index-tts.git"
