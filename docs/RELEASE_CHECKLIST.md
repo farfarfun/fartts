@@ -160,7 +160,7 @@ FunTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，�
 
 ## 📞 社区支持
 
-- **GitHub仓库**: https://github.com/farfarfun/funtts
+- **GitHub仓库**: https://github.com/farfarfun/fartts
 - **文档网站**: 完整的在线文档
 - **示例代码**: 丰富的使用示例
 - **问题反馈**: GitHub Issues

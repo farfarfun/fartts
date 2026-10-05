@@ -571,7 +571,7 @@ logger = getLogger("funtts")
 如果遇到安装或部署问题，请：
 
 1. 查看 [FAQ文档](FAQ.md)
-2. 搜索 [GitHub Issues](https://github.com/farfarfun/funtts/issues)
+2. 搜索 [GitHub Issues](https://github.com/farfarfun/fartts/issues)
 3. 提交新的Issue，包含：
    - 系统信息 (`python --version`, `pip --version`)
    - 错误日志

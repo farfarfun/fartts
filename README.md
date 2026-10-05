@@ -571,8 +571,8 @@ custom_tts = TTSFactory.create_tts("mycustom", "custom_voice_1")
 
 ```bash
 # 克隆项目
-git clone https://github.com/farfarfun/funtts.git
-cd funtts
+git clone https://github.com/farfarfun/fartts.git
+cd fartts
 
 # 安装开发依赖和所有受支持的引擎
 uv sync --all-extras --group dev
@@ -630,8 +630,8 @@ uv run ruff format .
 
 ## 📞 联系我们
 
-- **GitHub Issues**: [提交问题](https://github.com/farfarfun/funtts/issues)
-- **GitHub Discussions**: [参与讨论](https://github.com/farfarfun/funtts/discussions)
+- **GitHub Issues**: [提交问题](https://github.com/farfarfun/fartts/issues)
+- **GitHub Discussions**: [参与讨论](https://github.com/farfarfun/fartts/discussions)
 - **Email**: farfarfun@qq.com
 
 ---

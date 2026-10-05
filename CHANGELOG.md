@@ -45,6 +45,28 @@
   `audioop-lts` 条件依赖）。
 - 修复 README 徽章指向 PyPI 上的 `funtts`（该名字属于另一个项目），改为本项目
   实际的发行名 `funtts-plus`。
+- 修复 IndexTTS2 的「假成功」：`_load_model()` 把一个占位字典当作模型加载成功，
+  `_generate_speech()` 返回 `np.zeros(...)`，最终以 `success=True` 交回一个
+  合法但纯静音的 WAV。现在直接抛 `NotImplementedError`。
+- 修复 `_auto_register_engines()` 漏注册 bark / tortoise / kitten，导致
+  `create_tts("bark")` 等一律抛「不支持的TTS引擎」的问题。
+- 修复 `TTSEngine` 枚举含不存在的 `festival`、且缺少 bark/tortoise/kitten 的
+  问题，现与实际注册表严格一致（有测试锁定）。
+- 修复 `CoquiTTS` 使用已被移除的 `TTS(..., gpu=...)` 参数（改用 `.to(device)`，
+  同时兼容官方 `TTS` 与维护中的 `coqui-tts` 分支）。
+- 修复各引擎 README 中 `pip install funtts[...]` 用错发行名、以及
+  `pip install "funtts-plus[indextts]"`（`indextts` 并未发布到 PyPI，该命令
+  必然失败）的问题。
+- 修复文档中的仓库链接：统一指向实际存在的 `farfarfun/fartts`。
+
+### 已知限制
+
+- IndexTTS2 只有骨架，未对接真实模型，未注册到 `TTSFactory`。
+- KittenTTS 按假想的 `kitten_tts.KittenTTSModel` API 编写，而该包未发布到
+  PyPI，实例化会抛 `ImportError`。
+- Coqui TTS 未注册、也没有对应 extra（官方 `TTS` 发行版 Python 上限为 3.12）。
+- GitHub 仓库名 (`fartts`)、导入包名 (`funtts`)、PyPI 发行名 (`funtts-plus`)
+  三者仍不一致，需要仓库所有者决定统一到哪一个。
 
 ### 变更
 
