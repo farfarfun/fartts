@@ -1,5 +1,11 @@
 # IndexTTS2 TTS引擎
 
+> ⚠️ **当前状态：未完成。** `src/funtts/tts/indextts2/` 下只有骨架代码，
+> `_load_model()` / `_generate_speech()` 都还没有对接真实的 IndexTTS2 模型，
+> 调用会直接抛 `NotImplementedError`；该引擎也没有注册到 `TTSFactory`。
+> 在此之前它会返回一段纯静音的 WAV 并报告 `success=True`。
+> 本文描述的是目标能力，不是现状。
+
 IndexTTS2是一个工业级可控制的文本转语音模型，具有高质量的语音合成能力和精确的时长控制功能。该引擎支持情感控制和自然语言指令，适用于需要高质量语音输出的应用场景。
 
 ## 概述
@@ -45,14 +51,16 @@ librosa>=0.9.0
 
 ### 基础安装
 ```bash
-# 安装FunTTS和IndexTTS2支持
-pip install "funtts[indextts]"
+# 注意：indextts 未发布到 PyPI，下面这条命令在 pip 下会失败，
+# 只有 uv 能用（pyproject 里配了 [tool.uv.sources.indextts] 指向 git）。
+# 且即便装上，引擎本身也还没对接模型，装了也用不了。
+uv sync --extra indextts
 ```
 
 ### 完整安装
 ```bash
 # 安装标准引擎集合（不包含 IndexTTS）
-pip install funtts[all]
+pip install funtts-plus[all]
 ```
 
 ### 手动安装依赖

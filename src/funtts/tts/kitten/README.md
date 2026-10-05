@@ -1,5 +1,11 @@
 # KittenTTS引擎
 
+> ⚠️ **当前状态：未完成。** 本引擎是按假想的 `kitten_tts.KittenTTSModel` /
+> `kitten_tts.KittenTTSConfig` API 写的（源码里还留着「假设KittenTTS的导入方式」
+> 的注释），而 `kitten-tts` 这个包并未发布到 PyPI，实例化时会抛 `ImportError`。
+> `funtts-plus[kitten]` 只声明了 torch/torchaudio/soundfile/numpy，不含模型包。
+> 本文描述的是目标能力，不是现状。
+
 ## 概述
 
 KittenTTS是一个基于深度学习的高质量文本转语音引擎，采用先进的神经网络架构，能够生成自然流畅、情感丰富的语音。该引擎支持多种语言和语音风格，适合对语音质量要求较高的应用场景。

@@ -74,30 +74,19 @@ class IndexTTS2(BaseTTS):
         return device
 
     def _load_model(self):
-        """延迟加载模型"""
-        if self.model is not None:
-            return
+        """延迟加载模型
 
-        try:
-            # 这里需要根据实际的IndexTTS2 API进行调整
-            logger.info("正在加载IndexTTS2模型...")
+        本引擎目前只有骨架，尚未对接真实的 IndexTTS2 模型，因此这里直接抛错。
 
-            # 示例实现 - 需要根据实际API调整
-            # from indextts2 import IndexTTS2Model
-            # self.model = IndexTTS2Model.from_pretrained(
-            #     self.model_path or "index-tts/indextts2",
-            #     device=self.device
-            # )
-
-            # 临时实现 - 模拟模型加载
-            self.model = {"status": "loaded", "device": self.device}
-            self.tokenizer = {"status": "loaded"}
-
-            logger.success("IndexTTS2模型加载成功")
-
-        except Exception as e:
-            logger.error(f"IndexTTS2模型加载失败: {e}")
-            raise RuntimeError(f"无法加载IndexTTS2模型: {e}")
+        原实现把 `self.model = {"status": "loaded"}` 当作「加载成功」，再由
+        `_generate_speech()` 返回一段 `np.zeros(...)` 静音，最终以
+        `success=True` 返回一个纯静音 WAV——调用方完全无法察觉合成根本没发生。
+        宁可快速失败，也不要静默产出错误结果。
+        """
+        raise NotImplementedError(
+            "IndexTTS2 引擎尚未对接真实模型，当前仅有骨架实现。"
+            "请改用 edge / azure / bark / coqui / tortoise / kitten 等引擎。"
+        )
 
     def _synthesize(self, request: TTSRequest) -> TTSResponse:
         """
@@ -185,13 +174,19 @@ class IndexTTS2(BaseTTS):
                 },
             )
 
+        except NotImplementedError:
+            # 引擎未实现的事实不要被包装成普通运行时错误
+            raise
         except Exception as e:
             logger.error(f"IndexTTS2语音合成失败: {e}")
             raise RuntimeError(f"IndexTTS2语音合成错误: {e}")
 
     def _generate_speech(self, params: dict[str, Any]) -> bytes:
-        """
-        生成语音数据
+        """生成语音数据
+
+        未对接真实模型前不要返回任何占位音频：原实现返回
+        `np.zeros(...)` 静音，调用链一路 `success=True`，用户拿到的是一个
+        合法但完全无声的 WAV。
 
         Args:
             params: 合成参数
@@ -199,38 +194,10 @@ class IndexTTS2(BaseTTS):
         Returns:
             bytes: 音频数据
         """
-        try:
-            # 这里需要根据实际的IndexTTS2 API进行调整
-            logger.debug(f"生成语音，参数: {params}")
-
-            # 示例实现 - 需要根据实际API调整
-            # audio_data = self.model.synthesize(
-            #     text=params['text'],
-            #     voice=params['voice_name'],
-            #     temperature=params['temperature'],
-            #     speed=params['speed'],
-            #     emotion=params['emotion'],
-            #     emotion_strength=params['emotion_strength']
-            # )
-
-            # 临时实现 - 生成空音频数据
-            sample_rate = self.config["sample_rate"]
-            duration = len(params["text"]) * 0.1  # 粗略估算
-            num_samples = int(sample_rate * duration)
-
-            import numpy as np
-
-            # 生成静音音频数据作为占位符
-            audio_array = np.zeros(num_samples, dtype=np.float32)
-
-            # 转换为字节数据
-            audio_data = (audio_array * 32767).astype(np.int16).tobytes()
-
-            return audio_data
-
-        except Exception as e:
-            logger.error(f"生成语音数据失败: {e}")
-            raise
+        raise NotImplementedError(
+            "IndexTTS2 引擎尚未对接真实模型，无法生成音频。"
+            f"待实现的合成参数: {sorted(params)}"
+        )
 
     def _save_audio(self, audio_data: bytes, output_path: Path):
         """保存音频文件"""

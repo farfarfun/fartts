@@ -15,7 +15,7 @@ Tortoise TTS是一个专注于高质量语音合成的深度学习模型，以�
 
 ```bash
 # 安装Tortoise TTS依赖
-pip install funtts[tortoise]
+pip install funtts-plus[tortoise]
 
 # 或者单独安装
 pip install tortoise-tts>=2.4.0 torch torchaudio soundfile numpy

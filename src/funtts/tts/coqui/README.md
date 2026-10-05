@@ -1,6 +1,6 @@
 # Coqui TTS引擎
 
-> Coqui TTS 目前未作为 FunTTS 的可安装或已注册引擎提供，原因是 Python 版本兼容性限制。本文仅保留 Coqui TTS 的参考资料；`coqui` extra 不存在，且 `funtts[all]` 不包含它。
+> Coqui TTS 目前未作为 FunTTS 的可安装或已注册引擎提供，原因是 Python 版本兼容性限制。本文仅保留 Coqui TTS 的参考资料；`coqui` extra 不存在，且 `funtts-plus[all]` 不包含它。
 
 Coqui TTS是一个功能强大的深度学习文本转语音工具包，支持多种先进的TTS模型架构。该引擎提供高质量的语音合成、语音克隆功能，并支持多种语言和自定义模型训练。
 
@@ -46,7 +46,7 @@ espeak-ng  # 用于某些模型的音素处理
 
 ### FunTTS 支持状态
 
-Coqui TTS 当前不是 FunTTS 可用的 extra，且不包含在 `funtts[all]` 中。
+Coqui TTS 当前不是 FunTTS 可用的 extra，且不包含在 `funtts-plus[all]` 中。
 
 ### 手动安装依赖
 ```bash

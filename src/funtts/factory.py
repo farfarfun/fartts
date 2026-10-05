@@ -13,13 +13,21 @@ logger = getLogger("funtts")
 
 
 class TTSEngine(Enum):
-    """支持的TTS引擎枚举"""
+    """支持的TTS引擎枚举
+
+    取值与 `_auto_register_engines()` 实际注册的引擎名一一对应。
+    此前这里有一个 `FESTIVAL = "festival"`，但仓库里从来没有 festival 引擎的
+    实现，`create_tts("festival")` 必然抛「不支持的TTS引擎」；同时 bark /
+    tortoise / kitten 三个真实存在且已注册的引擎又没有列进来。
+    """
 
     EDGE = "edge"
     AZURE = "azure"
     ESPEAK = "espeak"
     PYTTSX3 = "pyttsx3"
-    FESTIVAL = "festival"
+    BARK = "bark"
+    TORTOISE = "tortoise"
+    KITTEN = "kitten"
 
 
 class TTSFactory:
@@ -181,6 +189,38 @@ def _auto_register_engines() -> None:
         TTSFactory.register_engine("pyttsx3", Pyttsx3TTS)
     except ImportError as e:
         logger.warning(f"无法导入Pyttsx3TTS: {e}")
+
+    # 重型引擎：模块本身不会 import torch/bark/TTS 等重依赖（都做了延迟导入），
+    # 所以可以无条件注册；缺依赖时在实例化/加载模型阶段报错。
+    # 此前这里漏掉了它们，导致 create_tts("bark") / create_tts("tortoise") /
+    # create_tts("kitten") 一律抛「不支持的TTS引擎」，而 README 的引擎表和
+    # pyproject 的 extras 都把它们列为可用。
+    try:
+        from funtts.tts.bark import BarkTTS
+
+        TTSFactory.register_engine("bark", BarkTTS)
+    except ImportError as e:
+        logger.warning(f"无法导入BarkTTS: {e}")
+
+    try:
+        from funtts.tts.tortoise import TortoiseTTS
+
+        TTSFactory.register_engine("tortoise", TortoiseTTS)
+    except ImportError as e:
+        logger.warning(f"无法导入TortoiseTTS: {e}")
+
+    try:
+        from funtts.tts.kitten import KittenTTS
+
+        TTSFactory.register_engine("kitten", KittenTTS)
+    except ImportError as e:
+        logger.warning(f"无法导入KittenTTS: {e}")
+
+    # 刻意不注册的两个引擎：
+    # - coqui：README 已标注「暂时禁用（兼容性问题）」，pyproject 里也没有对应
+    #   的 extra，注册了反而给出「可用」的错误信号；
+    # - indextts2：只有骨架，没有对接真实模型，详见
+    #   funtts/tts/indextts2/tts.py 中 _load_model() 的说明。
 
 
 # 执行自动注册

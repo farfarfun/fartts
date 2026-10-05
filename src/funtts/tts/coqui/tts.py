@@ -84,16 +84,27 @@ class CoquiTTS(BaseTTS):
 
             logger.info(f"正在加载Coqui TTS模型: {self.model_name}")
 
-            # 初始化TTS模型
-            self.tts_model = TTS(
-                model_name=self.model_name, gpu=(self.device == "cuda")
-            )
+            # 初始化TTS模型。
+            # 不要再用 `TTS(..., gpu=...)`：官方 TTS 0.22 之后 gpu 参数已废弃，
+            # 维护中的 coqui-tts 分支里直接移除了它，传入会 TypeError。
+            # 统一用 `.to(device)`，两边都兼容。
+            self.tts_model = TTS(model_name=self.model_name, progress_bar=False)
+            try:
+                self.tts_model.to(self.device)
+            except Exception as e:
+                logger.warning(
+                    f"无法把Coqui模型移到 {self.device}，继续用默认设备: {e}"
+                )
 
             logger.success("Coqui TTS模型加载成功")
 
         except ImportError:
-            logger.error("Coqui TTS未安装，请运行: pip install TTS")
-            raise RuntimeError("Coqui TTS未安装，请先安装依赖")
+            # 没有 funtts-plus[coqui] extra：官方 TTS 发行版上限是 Python
+            # 3.12，与本项目 >=3.10 的声明冲突，所以 README 把 Coqui 标为
+            # 「暂时禁用」。要手动启用请装维护中的分支 coqui-tts（import 名
+            # 仍是 TTS）。
+            logger.error("Coqui TTS未安装，请手动运行: pip install coqui-tts")
+            raise RuntimeError("Coqui TTS未安装，请先安装依赖（pip install coqui-tts）")
         except Exception as e:
             logger.error(f"Coqui TTS模型加载失败: {e}")
             raise RuntimeError(f"无法加载Coqui TTS模型: {e}")

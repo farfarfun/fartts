@@ -29,13 +29,16 @@ FunTTS是一个现代化的Python文本转语音(TTS)库，提供统一的接口
 | **Azure TTS** 🏢 | ✅ | ✅ | ➖ | 🔑 需要 | 🌐 需要 | 9.5/10 | 7.5x | SSML，企业级 | [📖](src/funtts/tts/azure/README.md) |
 | **Bark TTS** 🎭 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | 📥 首次 | 8.0/10 | 0.4x | 特效音效，笑声音乐 | [📖](src/funtts/tts/bark/README.md) |
 | **Tortoise TTS** 🐢 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | 📥 首次 | 9.8/10 | 0.13x | 语音克隆，极致质量 | [📖](src/funtts/tts/tortoise/README.md) |
-| **IndexTTS2** ⚡ | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | ➖ 离线 | 8.5/10 | 2.0x | 情感控制，时长控制 | [📖](src/funtts/tts/indextts2/README.md) |
-| **KittenTTS** 🐱 | ✅ | ✅ | 🚀 推荐 | 🆓 免费 | ➖ 离线 | 7.5/10 | 5.0x | 神经网络，轻量级 | [📖](src/funtts/tts/kitten/README.md) |
+| ~~IndexTTS2~~ ⚡ | 🚧 | ⚠️ | ⚠️ | 🆓 免费 | ➖ 离线 | ⚠️ | ⚠️ | 仅有骨架，尚未对接真实模型 | [📖](src/funtts/tts/indextts2/README.md) |
+| ~~KittenTTS~~ 🐱 | 🚧 | ⚠️ | 🚀 推荐 | 🆓 免费 | ➖ 离线 | ⚠️ | ⚠️ | 依赖包 `kitten_tts` 未发布，暂不可用 | [📖](src/funtts/tts/kitten/README.md) |
 | **eSpeak** 🔧 | ✅ | ✅ | ➖ | 🆓 免费 | ➖ 离线 | 5.0/10 | 60x | 轻量级，多语言 | [📖](src/funtts/tts/espeak/README.md) |
 | **pyttsx3** 💻 | ✅ | ✅ | ➖ | 🆓 免费 | ➖ 离线 | 6.0/10 | 30x | 跨平台，系统集成 | [📖](src/funtts/tts/pyttsx3/README.md) |
 | ~~Coqui TTS~~ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | 暂时禁用（兼容性问题） | ~~[📖](src/funtts/tts/coqui/README.md)~~ |
 
 ### 🔍 图例说明
+
+**状态:**
+- ✅ 可用 | 🚧 未完成（代码在仓库里，但还不能真正合成）| ⚠️ 已禁用
 
 **硬件支持:**
 - ✅ 支持 | ➖ 不支持 | 🚀 推荐使用GPU加速
@@ -91,16 +94,13 @@ pip install funtts-plus[bark]
 # Tortoise TTS (高质量语音克隆)
 pip install funtts-plus[tortoise]
 
-# IndexTTS2 (工业级TTS，支持情感控制)
-pip install "funtts-plus[indextts]"
-
-# KittenTTS (深度学习TTS，需要GPU支持)
-pip install funtts-plus[kitten]
+# IndexTTS2 暂不可用（引擎只有骨架，尚未对接真实模型）
+# KittenTTS 暂不可用（所需的 kitten_tts 包尚未发布）
 
 # pyttsx3 (跨平台本地TTS)
 pip install funtts-plus[pyttsx3]
 
-# 完整安装（所有引擎）
+# 完整安装（Edge + Azure + Bark + Tortoise + eSpeak + pyttsx3）
 pip install funtts-plus[all]
 ```
 
@@ -463,10 +463,12 @@ if response.success:
 - **特点**: 企业级、SSML支持、高度可定制
 - **适用**: 商业应用、需要高级功能的场景
 
-### 🐸 Coqui TTS
+### 🐸 Coqui TTS（暂时禁用）
 - **文档**: [src/funtts/tts/coqui/README.md](src/funtts/tts/coqui/README.md)
 - **特点**: 多模型支持、语音克隆、多语言、可训练
-- **适用**: 研究开发、自定义模型、多语言应用
+- **状态**: 未在 `TTSFactory` 中注册，也没有对应的 extra。官方 `TTS` 发行版的
+  Python 上限是 3.12，与本项目 `requires-python >= 3.10` 冲突；要手动启用请安装
+  维护中的分支 `pip install coqui-tts`（import 名仍为 `TTS`）
 
 ### 🌳 Bark TTS
 - **文档**: [src/funtts/tts/bark/README.md](src/funtts/tts/bark/README.md)
@@ -478,15 +480,17 @@ if response.success:
 - **特点**: 极高音质、语音克隆、接近真人、多种预设
 - **适用**: 高质量配音、语音克隆、专业制作
 
-### 🏭 IndexTTS2
+### 🏭 IndexTTS2（未完成）
 - **文档**: [src/funtts/tts/indextts2/README.md](src/funtts/tts/indextts2/README.md)
-- **特点**: 工业级、情感控制、自然语言指令、精确时长控制
-- **适用**: 专业应用、情感语音、内容创作、AI助手
+- **规划特点**: 工业级、情感控制、自然语言指令、精确时长控制
+- **状态**: 仓库里只有骨架代码，尚未对接真实模型，未在 `TTSFactory` 中注册；
+  调用会直接抛 `NotImplementedError`（此前它会返回一个纯静音的 WAV 并报告成功）
 
-### 🐱 KittenTTS
+### 🐱 KittenTTS（未完成）
 - **文档**: [src/funtts/tts/kitten/README.md](src/funtts/tts/kitten/README.md)
-- **特点**: 深度学习、高质量、神经网络、多语音风格
-- **适用**: 高质量语音需求、AI应用、内容创作
+- **规划特点**: 深度学习、高质量、神经网络、多语音风格
+- **状态**: 代码按假想的 `kitten_tts.KittenTTSModel` API 编写，而该包并未发布到
+  PyPI，实例化时会抛 `ImportError`
 
 ### 🔊 eSpeak TTS
 - **文档**: [src/funtts/tts/espeak/README.md](src/funtts/tts/espeak/README.md)

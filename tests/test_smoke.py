@@ -238,24 +238,46 @@ def test_engines_implement_synthesize_contract(import_path, class_name, kwargs):
     assert inspect.isabstract(cls) is False
 
 
-def test_indextts2_synthesize_without_external_model(tmp_path, monkeypatch):
+def test_indextts2_fails_loudly_instead_of_returning_silence(tmp_path):
+    """IndexTTS2 只有骨架，没有对接真实模型。
+
+    原实现把 `self.model = {"status": "loaded"}` 当成加载成功，再让
+    `_generate_speech()` 返回 `np.zeros(...)`，最终以 `success=True` 交回一个
+    合法但纯静音的 WAV——调用方完全无法察觉合成根本没发生。现在必须快速失败。
+    """
     from funtts import TTSRequest
     from funtts.tts.indextts2 import IndexTTS2
 
     tts = IndexTTS2(device="cpu")
-    monkeypatch.setattr(tts, "_generate_speech", lambda params: b"\0\0" * 100)
-
     response = tts.synthesize(
-        TTSRequest(
-            text="测试",
-            output_dir=str(tmp_path),
-            generate_subtitles=True,
-        )
+        TTSRequest(text="测试", output_dir=str(tmp_path), generate_subtitles=True)
     )
 
-    assert response.success is True
-    assert response.audio_file
-    assert response.subtitle_file
+    assert response.success is False
+    assert response.audio_file is None
+    assert "尚未对接真实模型" in (response.error_message or "")
+    assert not list(tmp_path.glob("*.wav"))
+
+
+def test_indextts2_is_not_registered_in_factory():
+    from funtts.factory import TTSFactory
+
+    assert "indextts2" not in TTSFactory.get_available_engines()
+    assert "coqui" not in TTSFactory.get_available_engines()
+
+
+def test_registered_engines_match_ttsengine_enum():
+    """TTSEngine 枚举此前有一个根本不存在的 `festival`，而 bark/tortoise/kitten
+    三个真实引擎既没进枚举、也没在 _auto_register_engines() 里注册，
+    `create_tts("bark")` 一直抛「不支持的TTS引擎」。"""
+    from funtts.factory import TTSEngine, TTSFactory
+
+    assert sorted(TTSFactory.get_available_engines()) == sorted(
+        member.value for member in TTSEngine
+    )
+    assert "bark" in TTSFactory.get_available_engines()
+    assert "tortoise" in TTSFactory.get_available_engines()
+    assert "kitten" in TTSFactory.get_available_engines()
 
 
 def test_tortoise_tts_imports():

@@ -15,7 +15,7 @@ Bark是由Suno AI开发的基于Transformer的文本转语音模型，以其独�
 
 ```bash
 # 安装Bark TTS依赖
-pip install funtts[bark]
+pip install funtts-plus[bark]
 
 # 或者单独安装
 pip install bark>=0.1.5 torch torchaudio scipy soundfile numpy
