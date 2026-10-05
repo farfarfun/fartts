@@ -83,52 +83,55 @@ class {EngineName}TTS(BaseTTS):
         super().__init__(voice_name, **kwargs)
         # 引擎特定的初始化逻辑
         
-    def synthesize(self, request: TTSRequest) -> TTSResponse:
+    def _synthesize(self, request: TTSRequest) -> TTSResponse:
         """
-        语音合成实现
-        
+        语音合成核心逻辑（抽象方法，必须实现）
+
+        只写纯粹的合成逻辑即可。参数校验、字幕落盘、输出文件/目录处理、
+        `processing_time` 与 `engine_info` 的填充都由基类的 `synthesize()`
+        统一完成。
+
+        ⚠️ 不要重写公开的 `synthesize()`，那会跳过上述全部后处理，
+        `generate_subtitles=True` 时字幕文件将永远不会被写到磁盘。
+
         Args:
             request: TTS请求对象
-            
+
         Returns:
             TTSResponse: TTS响应对象
         """
         # 必须实现的核心方法
-        pass
-        
-    def list_voices(self, language: str = None) -> List[VoiceInfo]:
+        raise NotImplementedError
+
+    def list_voices(self, language: str | None = None) -> list[VoiceInfo]:
         """
-        获取可用语音列表
-        
+        获取可用语音列表（抽象方法，必须实现）
+
         Args:
             language: 语言过滤条件
-            
+
         Returns:
-            List[VoiceInfo]: 语音信息列表
+            list[VoiceInfo]: 语音信息列表
         """
         # 必须实现的方法
-        pass
-        
-    def is_voice_available(self, voice_name: str) -> bool:
+        raise NotImplementedError
+
+    def _pre_synthesize_check(self, request: TTSRequest) -> TTSResponse | None:
         """
-        检查语音是否可用
-        
-        Args:
-            voice_name: 语音名称
-            
-        Returns:
-            bool: 是否可用
+        合成前的引擎级检查（可选实现）
+
+        用于检查依赖是否安装、凭据是否齐备、引擎特有的文本长度限制等。
+        返回 None 表示通过，返回 TTSResponse 表示直接以该失败响应返回。
         """
-        # 必须实现的方法
-        pass
-        
+        return None
+
     def _validate_request(self, request: TTSRequest) -> bool:
         """
-        验证请求参数（可选实现）
-        
+        验证请求参数（可选实现，供 `_pre_synthesize_check` 调用）
+
         Args:
             request: TTS请求对象
-            
+
         Returns:
             bool: 验证结果
         """
@@ -157,29 +160,36 @@ class {EngineName}TTS(BaseTTS):
 
 ### 4. 错误处理规范
 
+前置条件（依赖、凭据、语音可用性）放在 `_pre_synthesize_check` 里，
+合成失败放在 `_synthesize` 里；两者都返回 `TTSResponse`，不要抛给调用方。
+
 ```python
-def synthesize(self, request: TTSRequest) -> TTSResponse:
-    """语音合成实现"""
+def _pre_synthesize_check(self, request: TTSRequest) -> TTSResponse | None:
+    """合成前检查：不通过就返回失败响应"""
+    # 参数验证
+    if not self._validate_request(request):
+        return TTSResponse(
+            success=False,
+            request=request,
+            error_message="请求参数验证失败",
+            error_code="INVALID_REQUEST",
+        )
+
+    # 语音检查
+    if not self.is_voice_available(request.voice_name):
+        return TTSResponse(
+            success=False,
+            request=request,
+            error_message=f"语音不可用: {request.voice_name}",
+            error_code="VOICE_NOT_AVAILABLE",
+        )
+
+    return None
+
+
+def _synthesize(self, request: TTSRequest) -> TTSResponse:
+    """语音合成核心逻辑"""
     try:
-        # 参数验证
-        if not self._validate_request(request):
-            return TTSResponse(
-                success=False,
-                request=request,
-                error_message="请求参数验证失败",
-                error_code="INVALID_REQUEST",
-            )
-
-        # 语音检查
-        if not self.is_voice_available(request.voice_name):
-            return TTSResponse(
-                success=False,
-                request=request,
-                error_message=f"语音不可用: {request.voice_name}",
-                error_code="VOICE_NOT_AVAILABLE",
-            )
-
-        # 核心合成逻辑
         start_time = time.time()
 
         # ... 实现合成逻辑 ...

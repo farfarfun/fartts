@@ -54,37 +54,32 @@ class AzureTTS(BaseTTS):
         else:
             logger.info(f"Azure TTS引擎初始化完成，区域: {self.service_region}")
 
-    def synthesize(self, request: TTSRequest) -> TTSResponse:
-        """
-        语音合成实现
+    def _pre_synthesize_check(self, request: TTSRequest) -> TTSResponse | None:
+        """Azure 引擎的合成前检查
 
-        Args:
-            request: TTS请求对象
-
-        Returns:
-            TTSResponse: TTS响应对象
+        不要改回重写 `synthesize()`：那样会跳过基类的字幕落盘与输出文件处理。
         """
+        # 参数验证
+        if not self._validate_request(request):
+            return TTSResponse(
+                success=False,
+                request=request,
+                error_message="请求参数验证失败",
+                error_code="INVALID_REQUEST",
+            )
+
+        # 检查Azure配置
+        if not self.speech_key or not self.service_region:
+            return TTSResponse(
+                success=False,
+                request=request,
+                error_message="Azure语音服务未配置，请设置 AZURE_SPEECH_KEY 和 AZURE_SPEECH_REGION 环境变量",
+                error_code="MISSING_CREDENTIALS",
+            )
+
+        # 检查SDK是否安装
         try:
-            # 参数验证
-            if not self._validate_request(request):
-                return TTSResponse(
-                    success=False,
-                    request=request,
-                    error_message="请求参数验证失败",
-                    error_code="INVALID_REQUEST",
-                )
-
-            # 检查Azure配置
-            if not self.speech_key or not self.service_region:
-                return TTSResponse(
-                    success=False,
-                    request=request,
-                    error_message="Azure语音服务未配置，请设置speech_key和service_region",
-                    error_code="MISSING_CREDENTIALS",
-                )
-
-            return self._synthesize(request)
-
+            import azure.cognitiveservices.speech  # noqa: F401
         except ImportError as e:
             logger.error(f"Azure SDK未安装: {e}")
             return TTSResponse(
@@ -94,14 +89,7 @@ class AzureTTS(BaseTTS):
                 error_code="MISSING_DEPENDENCY",
             )
 
-        except Exception as e:
-            logger.error(f"Azure TTS语音合成失败: {e}")
-            return TTSResponse(
-                success=False,
-                request=request,
-                error_message=str(e),
-                error_code="SYNTHESIS_ERROR",
-            )
+        return None
 
     def _synthesize(self, request: TTSRequest) -> TTSResponse:
         """Azure TTS语音合成核心方法"""

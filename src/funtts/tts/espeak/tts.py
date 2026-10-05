@@ -48,45 +48,30 @@ class EspeakTTS(BaseTTS):
         else:
             logger.warning("eSpeak程序不可用，请确保已正确安装")
 
-    def synthesize(self, request: TTSRequest) -> TTSResponse:
+    def _pre_synthesize_check(self, request: TTSRequest) -> TTSResponse | None:
+        """eSpeak 引擎的合成前检查
+
+        不要改回重写 `synthesize()`：那样会跳过基类的字幕落盘与输出文件处理。
         """
-        语音合成实现
-
-        Args:
-            request: TTS请求对象
-
-        Returns:
-            TTSResponse: TTS响应对象
-        """
-        try:
-            # 参数验证
-            if not self._validate_request(request):
-                return TTSResponse(
-                    success=False,
-                    request=request,
-                    error_message="请求参数验证失败",
-                    error_code="INVALID_REQUEST",
-                )
-
-            # 检查eSpeak可用性
-            if not self._check_espeak_available():
-                return TTSResponse(
-                    success=False,
-                    request=request,
-                    error_message="eSpeak程序不可用，请安装eSpeak",
-                    error_code="MISSING_DEPENDENCY",
-                )
-
-            return self._synthesize(request)
-
-        except Exception as e:
-            logger.error(f"eSpeak TTS语音合成失败: {e}")
+        # 参数验证
+        if not self._validate_request(request):
             return TTSResponse(
                 success=False,
                 request=request,
-                error_message=str(e),
-                error_code="SYNTHESIS_ERROR",
+                error_message="请求参数验证失败",
+                error_code="INVALID_REQUEST",
             )
+
+        # 检查eSpeak可用性
+        if not self._check_espeak_available():
+            return TTSResponse(
+                success=False,
+                request=request,
+                error_message="eSpeak程序不可用，请安装eSpeak",
+                error_code="MISSING_DEPENDENCY",
+            )
+
+        return None
 
     def _synthesize(self, request: TTSRequest) -> TTSResponse:
         """eSpeak TTS语音合成核心方法"""

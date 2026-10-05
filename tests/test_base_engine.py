@@ -182,6 +182,83 @@ def test_factory_rejects_unknown_engine():
 
 
 # ---------------------------------------------------------------------------
+# 合成前检查钩子 / 字幕落盘
+# ---------------------------------------------------------------------------
+
+
+def test_pre_synthesize_check_short_circuits():
+    class _BlockedTTS(_FakeTTS):
+        def _pre_synthesize_check(self, request):
+            return TTSResponse(
+                success=False,
+                error_message="凭据缺失",
+                error_code="MISSING_CREDENTIALS",
+            )
+
+    engine = _BlockedTTS()
+    response = engine.synthesize(TTSRequest(text="你好"))
+
+    assert response.success is False
+    assert response.error_code == "MISSING_CREDENTIALS"
+    assert response.request is not None
+    assert engine.last_request is None  # 没有进入真正的合成
+
+
+def test_subtitles_are_written_to_disk_by_base_pipeline(tmp_path):
+    """字幕落盘只在 BaseTTS.synthesize() 里做。Edge/Azure/eSpeak 曾经重写了
+    公开的 synthesize()，导致这三个引擎 generate_subtitles=True 时从不产出
+    字幕文件。"""
+    from funtts.models import SubtitleMaker
+
+    class _SubtitleTTS(_FakeTTS):
+        def _synthesize(self, request):
+            response = super()._synthesize(request)
+            maker = SubtitleMaker()
+            maker.add_segment(0.0, 1.0, "你好")
+            response.subtitle_maker = maker
+            return response
+
+    target = tmp_path / "out.wav"
+    response = _SubtitleTTS().synthesize(
+        TTSRequest(text="你好", output_file=str(target), generate_subtitles=True)
+    )
+
+    assert response.success, response.error_message
+    assert response.subtitle_file and os.path.exists(response.subtitle_file)
+    assert response.frt_subtitle_file and os.path.exists(response.frt_subtitle_file)
+
+
+def test_builtin_engines_do_not_override_public_synthesize():
+    """回归保护：引擎必须实现 _synthesize，不能重写 synthesize()。"""
+    import importlib
+
+    overridden = []
+    for module_name, class_name in (
+        ("funtts.tts.edge.tts", "EdgeTTS"),
+        ("funtts.tts.azure.tts", "AzureTTS"),
+        ("funtts.tts.espeak.tts", "EspeakTTS"),
+        ("funtts.tts.pyttsx3.tts", "Pyttsx3TTS"),
+        ("funtts.tts.bark.tts", "BarkTTS"),
+        ("funtts.tts.coqui.tts", "CoquiTTS"),
+        ("funtts.tts.tortoise.tts", "TortoiseTTS"),
+        ("funtts.tts.indextts2.tts", "IndexTTS2"),
+        ("funtts.tts.kitten.tts", "KittenTTS"),
+    ):
+        try:
+            module = importlib.import_module(module_name)
+        except ImportError:
+            continue  # 可选依赖未安装
+        engine_class = getattr(module, class_name)
+        if "synthesize" in engine_class.__dict__:
+            overridden.append(f"{module_name}.{class_name}")
+
+    assert not overridden, (
+        f"以下引擎重写了公开的 synthesize()，会跳过基类的字幕落盘与输出文件处理: "
+        f"{overridden}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # Edge 引擎的参数换算（纯函数，不触网）
 # ---------------------------------------------------------------------------
 

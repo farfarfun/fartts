@@ -68,6 +68,24 @@ class BaseTTS(ABC):
         """
         raise NotImplementedError("子类必须实现list_voices方法")
 
+    def _pre_synthesize_check(self, request: TTSRequest) -> TTSResponse | None:
+        """合成前的引擎级检查钩子（可选重写）
+
+        用于检查引擎自身的前置条件，例如依赖是否安装、凭据是否齐备、
+        文本长度是否超出该引擎的限制等。
+
+        注意：子类应该重写本方法而**不是**重写 `synthesize()`。重写
+        `synthesize()` 会跳过基类的字幕落盘、输出文件/目录处理和
+        `processing_time`/`engine_info` 填充。
+
+        Args:
+            request: TTS请求对象
+
+        Returns:
+            None 表示检查通过；返回 TTSResponse 表示直接以该失败响应返回
+        """
+        return None
+
     # ==================== 工具方法 ====================
 
     def get_default_voice(self) -> str | None:
@@ -178,6 +196,13 @@ class BaseTTS(ABC):
                     error_code="INVALID_REQUEST",
                     processing_time=time.time() - start_time,
                 )
+
+            # 引擎级前置检查（依赖、凭据、引擎特有的文本长度限制等）
+            precheck = self._pre_synthesize_check(request)
+            if precheck is not None:
+                precheck.request = request
+                precheck.processing_time = time.time() - start_time
+                return precheck
 
             # 调用子类实现的核心合成方法
             response = self._synthesize(request)

@@ -70,50 +70,27 @@ class EdgeTTS(BaseTTS):
         super().__init__(voice_name, **kwargs)
         logger.info(f"Edge TTS引擎初始化完成，默认语音: {voice_name}")
 
-    def synthesize(self, request: TTSRequest) -> TTSResponse:
+    def _pre_synthesize_check(self, request: TTSRequest) -> TTSResponse | None:
+        """Edge 引擎的合成前检查
+
+        不要改回重写 `synthesize()`：那样会跳过基类的字幕落盘与输出文件处理，
+        `generate_subtitles=True` 时字幕文件永远不会被写到磁盘上。
         """
-        语音合成实现
-
-        Args:
-            request: TTS请求对象
-
-        Returns:
-            TTSResponse: TTS响应对象
-        """
-        try:
-            # 参数验证
-            if not self._validate_request(request):
-                return TTSResponse(
-                    success=False,
-                    request=request,
-                    error_message="请求参数验证失败",
-                    error_code="INVALID_REQUEST",
-                )
-
-            # 语音检查
-            voice_name = request.voice_name or self.get_default_voice()
-            if not self.is_voice_available(voice_name):
-                logger.warning(f"语音可能不可用: {voice_name}，尝试继续合成")
-
-            return self._synthesize(request)
-
-        except ImportError as e:
-            logger.error(f"Edge TTS依赖包未安装: {e}")
+        # 参数验证
+        if not self._validate_request(request):
             return TTSResponse(
                 success=False,
                 request=request,
-                error_message="缺少依赖包: pip install edge-tts",
-                error_code="MISSING_DEPENDENCY",
+                error_message="请求参数验证失败",
+                error_code="INVALID_REQUEST",
             )
 
-        except Exception as e:
-            logger.error(f"Edge TTS语音合成失败: {e}")
-            return TTSResponse(
-                success=False,
-                request=request,
-                error_message=str(e),
-                error_code="SYNTHESIS_ERROR",
-            )
+        # 语音检查（不可用只告警，不阻断）
+        voice_name = request.voice_name or self.get_default_voice()
+        if not self.is_voice_available(voice_name):
+            logger.warning(f"语音可能不可用: {voice_name}，尝试继续合成")
+
+        return None
 
     @retry(4)
     def _synthesize(self, request: TTSRequest) -> TTSResponse:
@@ -236,7 +213,7 @@ class EdgeTTS(BaseTTS):
             voices = self.list_voices()
             return any(voice.name == voice_name for voice in voices)
         except Exception as e:
-            logger.error("无法获取语音列表，假设语音可用", e)
+            logger.error(f"无法获取语音列表，假设语音可用: {e}")
             # 如果无法获取语音列表，假设语音可用
             return True
 
