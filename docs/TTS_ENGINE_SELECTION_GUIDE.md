@@ -1,6 +1,6 @@
 # TTS引擎选择指南
 
-本指南将帮助你根据具体需求选择最合适的TTS引擎。FarTTS支持9种不同特色的TTS引擎，每种都有其独特的优势和适用场景。
+本指南将帮助你根据具体需求选择最合适的TTS引擎。FunTTS支持9种不同特色的TTS引擎，每种都有其独特的优势和适用场景。
 
 ## 🚀 快速选择
 
@@ -40,7 +40,7 @@
 
 **安装:**
 ```bash
-pip install fartts[edge]
+pip install funtts-plus[edge]
 ```
 
 ### 2. Azure TTS 🏢 **企业首选**
@@ -65,7 +65,7 @@ pip install fartts[edge]
 
 **安装:**
 ```bash
-pip install fartts[azure]
+pip install funtts-plus[azure]
 ```
 
 ### 3. Coqui TTS 🧠 **研究开发**
@@ -88,7 +88,7 @@ pip install fartts[azure]
 - 多语言项目
 - 语音克隆应用
 
-**当前状态:** Coqui TTS 因 Python 版本兼容性问题尚未作为 FarTTS 的可安装引擎提供。
+**当前状态:** Coqui TTS 因 Python 版本兼容性问题尚未作为 FunTTS 的可安装引擎提供。
 
 ### 4. Bark TTS 🎭 **创意特效**
 
@@ -111,7 +111,7 @@ pip install fartts[azure]
 
 **安装:**
 ```bash
-pip install fartts[bark]
+pip install funtts-plus[bark]
 ```
 
 ### 5. Tortoise TTS 🐢 **极致质量**
@@ -135,7 +135,7 @@ pip install fartts[bark]
 
 **安装:**
 ```bash
-pip install fartts[tortoise]
+pip install funtts-plus[tortoise]
 ```
 
 ### 6. IndexTTS2 ⚡ **情感控制**
@@ -159,7 +159,7 @@ pip install fartts[tortoise]
 
 **安装:**
 ```bash
-pip install "fartts[indextts]"
+pip install "funtts-plus[indextts]"
 ```
 
 ### 7. KittenTTS 🐱 **神经网络**
@@ -183,7 +183,7 @@ pip install "fartts[indextts]"
 
 **安装:**
 ```bash
-pip install fartts[kitten]
+pip install funtts-plus[kitten]
 ```
 
 ### 8. eSpeak TTS 🔧 **轻量级**
@@ -208,7 +208,7 @@ pip install fartts[kitten]
 
 **安装:**
 ```bash
-pip install fartts[espeak]
+pip install funtts-plus[espeak]
 ```
 
 ### 9. pyttsx3 TTS 💻 **跨平台**
@@ -233,7 +233,7 @@ pip install fartts[espeak]
 
 **安装:**
 ```bash
-pip install fartts[pyttsx3]
+pip install funtts-plus[pyttsx3]
 ```
 
 ## 🎯 按需求选择
@@ -280,7 +280,7 @@ pip install fartts[pyttsx3]
 ### 1. 个人博客/播客 📝
 **推荐:** Edge TTS
 ```python
-from fartts.tts.edge import EdgeTTS
+from funtts.tts.edge import EdgeTTS
 
 tts = EdgeTTS()
 # 免费、高质量、多语言
@@ -289,7 +289,7 @@ tts = EdgeTTS()
 ### 2. 企业客服系统 🏢
 **推荐:** Azure TTS
 ```python
-from fartts.tts.azure import AzureTTS
+from funtts.tts.azure import AzureTTS
 
 tts = AzureTTS()
 # 企业级、SSML控制、稳定SLA
@@ -298,7 +298,7 @@ tts = AzureTTS()
 ### 3. 游戏音效制作 🎮
 **推荐:** Bark TTS
 ```python
-from fartts.tts.bark import BarkTTS
+from funtts.tts.bark import BarkTTS
 
 tts = BarkTTS()
 # 特效音效、情感表达、创意内容
@@ -307,7 +307,7 @@ tts = BarkTTS()
 ### 4. 专业配音工作室 🎙️
 **推荐:** Tortoise TTS
 ```python
-from fartts.tts.tortoise import TortoiseTTS
+from funtts.tts.tortoise import TortoiseTTS
 
 tts = TortoiseTTS(preset="high_quality")
 # 极高质量、语音克隆、专业制作
@@ -316,7 +316,7 @@ tts = TortoiseTTS(preset="high_quality")
 ### 5. AI研究项目 🔬
 **推荐:** Coqui TTS
 ```python
-from fartts.tts.coqui import CoquiTTS
+from funtts.tts.coqui import CoquiTTS
 
 tts = CoquiTTS()
 # 多模型、可训练、开源灵活
@@ -325,7 +325,7 @@ tts = CoquiTTS()
 ### 6. 嵌入式设备 📱
 **推荐:** eSpeak TTS
 ```python
-from fartts.tts.espeak import EspeakTTS
+from funtts.tts.espeak import EspeakTTS
 
 tts = EspeakTTS()
 # 轻量级、离线、跨平台

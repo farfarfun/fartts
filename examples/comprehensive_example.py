@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-FarTTS 综合示例 - 展示所有TTS引擎的使用方法
+FunTTS 综合示例 - 展示所有TTS引擎的使用方法
 
-这个示例展示了如何使用FarTTS支持的所有TTS引擎，
+这个示例展示了如何使用FunTTS支持的所有TTS引擎，
 包括基础用法、高级功能和最佳实践。
 
 运行前请确保安装了相应的依赖：
-pip install fartts[all]
+pip install funtts[all]
 """
 
 import os
@@ -15,10 +15,10 @@ from pathlib import Path
 
 from farlog import getLogger
 
-from fartts import create_tts, get_available_engines
-from fartts.models import TTSRequest
+from funtts import create_tts, get_available_engines
+from funtts.models import TTSRequest
 
-logger = getLogger("fartts")
+logger = getLogger("funtts")
 
 
 def setup_output_directory():
@@ -34,7 +34,7 @@ def demo_edge_tts():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.edge import EdgeTTS
+        from funtts.tts.edge import EdgeTTS
 
         tts = EdgeTTS()
 
@@ -71,7 +71,7 @@ def demo_azure_tts():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.azure import AzureTTS
+        from funtts.tts.azure import AzureTTS
 
         # 注意：需要设置Azure API密钥
         if not os.getenv("AZURE_SPEECH_KEY"):
@@ -122,7 +122,7 @@ def demo_coqui_tts():
     return
 
     try:
-        from fartts.tts.coqui import CoquiTTS
+        from funtts.tts.coqui import CoquiTTS
 
         tts = CoquiTTS()
 
@@ -152,7 +152,7 @@ def demo_bark_tts():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.bark import BarkTTS
+        from funtts.tts.bark import BarkTTS
 
         tts = BarkTTS()
 
@@ -188,7 +188,7 @@ def demo_tortoise_tts():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.tortoise import TortoiseTTS
+        from funtts.tts.tortoise import TortoiseTTS
 
         # 使用快速预设进行演示
         tts = TortoiseTTS(preset="fast")
@@ -217,7 +217,7 @@ def demo_indextts2():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.indextts2 import IndexTTS2
+        from funtts.tts.indextts2 import IndexTTS2
 
         tts = IndexTTS2()
 
@@ -243,7 +243,7 @@ def demo_kitten_tts():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.kitten import KittenTTS
+        from funtts.tts.kitten import KittenTTS
 
         tts = KittenTTS()
 
@@ -269,7 +269,7 @@ def demo_espeak_tts():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.espeak import EspeakTTS
+        from funtts.tts.espeak import EspeakTTS
 
         tts = EspeakTTS()
 
@@ -295,7 +295,7 @@ def demo_pyttsx3_tts():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.pyttsx3 import Pyttsx3TTS
+        from funtts.tts.pyttsx3 import Pyttsx3TTS
 
         tts = Pyttsx3TTS()
 
@@ -340,7 +340,7 @@ def demo_batch_processing():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.edge import EdgeTTS
+        from funtts.tts.edge import EdgeTTS
 
         tts = EdgeTTS()
 
@@ -366,7 +366,7 @@ def demo_subtitle_generation():
     logger.info("=" * 50)
 
     try:
-        from fartts.tts.edge import EdgeTTS
+        from funtts.tts.edge import EdgeTTS
 
         tts = EdgeTTS()
 
@@ -395,9 +395,9 @@ def performance_comparison():
     test_text = "这是一个性能测试文本，用于比较不同TTS引擎的生成速度。"
 
     engines_to_test = [
-        ("Edge TTS", "fartts.tts.edge", "EdgeTTS"),
-        ("eSpeak TTS", "fartts.tts.espeak", "EspeakTTS"),
-        ("pyttsx3 TTS", "fartts.tts.pyttsx3", "Pyttsx3TTS"),
+        ("Edge TTS", "funtts.tts.edge", "EdgeTTS"),
+        ("eSpeak TTS", "funtts.tts.espeak", "EspeakTTS"),
+        ("pyttsx3 TTS", "funtts.tts.pyttsx3", "Pyttsx3TTS"),
     ]
 
     results = []
@@ -440,9 +440,9 @@ def performance_comparison():
 
 def main():
     """主函数"""
-    logger.info("🎉 FarTTS 综合演示")
+    logger.info("🎉 FunTTS 综合演示")
     logger.info("=" * 80)
-    logger.info("这个演示将展示FarTTS支持的所有TTS引擎的功能")
+    logger.info("这个演示将展示FunTTS支持的所有TTS引擎的功能")
     logger.info("请确保已安装相应的依赖包")
     logger.info("=" * 80)
 

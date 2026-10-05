@@ -5,7 +5,7 @@ import pytest
 
 
 def test_config_rejects_credentials_and_does_not_log_value(tmp_path, monkeypatch):
-    import fartts.config as config_module
+    import funtts.config as config_module
 
     logger = Mock()
     monkeypatch.setattr(config_module, "logger", logger)
@@ -21,7 +21,7 @@ def test_config_rejects_credentials_and_does_not_log_value(tmp_path, monkeypatch
 
 
 def test_config_migrates_persisted_azure_credentials(tmp_path):
-    from fartts.config import TTSConfig
+    from funtts.config import TTSConfig
 
     config_file = tmp_path / "config.json"
     config_file.write_text(
@@ -51,7 +51,7 @@ def test_config_migrates_persisted_azure_credentials(tmp_path):
     [("not json", "无法加载配置文件"), ("[]", "根节点必须是 JSON 对象")],
 )
 def test_config_load_failure_is_reported(tmp_path, contents, message):
-    from fartts.config import ConfigError, TTSConfig
+    from funtts.config import ConfigError, TTSConfig
 
     config_file = tmp_path / "config.json"
     config_file.write_text(contents, encoding="utf-8")
@@ -61,7 +61,7 @@ def test_config_load_failure_is_reported(tmp_path, contents, message):
 
 
 def test_config_save_failure_is_reported(tmp_path):
-    from fartts.config import ConfigError, TTSConfig
+    from funtts.config import ConfigError, TTSConfig
 
     config = TTSConfig(str(tmp_path / "config.json"))
     config.config_file = str(tmp_path)
@@ -71,7 +71,7 @@ def test_config_save_failure_is_reported(tmp_path):
 
 
 def test_merge_audio_files_success_and_empty_input(tmp_path, monkeypatch):
-    import fartts.utils.audio_utils as audio_utils
+    import funtts.utils.audio_utils as audio_utils
 
     first = tmp_path / "first.wav"
     second = tmp_path / "second.wav"
@@ -92,8 +92,8 @@ def test_merge_audio_files_success_and_empty_input(tmp_path, monkeypatch):
 
 
 def test_merge_subtitles_applies_gap_between_makers():
-    from fartts.models import SubtitleMaker
-    from fartts.utils import merge_subtitle_makers
+    from funtts.models import SubtitleMaker
+    from funtts.utils import merge_subtitle_makers
 
     first = SubtitleMaker()
     first.add_segment(0.0, 1.0, "first")
@@ -107,8 +107,8 @@ def test_merge_subtitles_applies_gap_between_makers():
 
 
 def test_merge_tts_responses_success(tmp_path, monkeypatch):
-    import fartts.utils.response_utils as response_utils
-    from fartts.models import SubtitleMaker, TTSResponse
+    import funtts.utils.response_utils as response_utils
+    from funtts.models import SubtitleMaker, TTSResponse
 
     audio_file = tmp_path / "part.wav"
     audio_file.touch()

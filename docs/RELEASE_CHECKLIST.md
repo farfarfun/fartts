@@ -1,10 +1,10 @@
-# FarTTS 项目发布清单
+# FunTTS 项目发布清单
 
-本文档记录了FarTTS项目的完善过程和发布前的检查清单。
+本文档记录了FunTTS项目的完善过程和发布前的检查清单。
 
 ## 🎯 项目概览
 
-FarTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，支持8个不同特色的TTS引擎，为用户提供从轻量级到工业级的全方位语音合成需求。
+FunTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，支持8个不同特色的TTS引擎，为用户提供从轻量级到工业级的全方位语音合成需求。
 
 ## ✅ 已完成的核心功能
 
@@ -43,7 +43,7 @@ FarTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，�
 
 - ✅ **依赖管理**: pyproject.toml 完整的可选依赖配置
 - ✅ **模块导入**: __init__.py 统一导入所有引擎
-- ✅ **日志配置**: 统一使用"fartts"日志名称
+- ✅ **日志配置**: 统一使用"funtts"日志名称
 - ✅ **错误处理**: 完善的异常处理和用户友好提示
 
 ## 🚀 项目亮点
@@ -151,7 +151,7 @@ FarTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，�
 
 ## 🎉 项目成就
 
-通过这次大规模的完善工作，FarTTS项目现在已经成为：
+通过这次大规模的完善工作，FunTTS项目现在已经成为：
 
 1. **最全面的开源TTS工具包** - 支持8种不同特色的TTS引擎
 2. **最易用的TTS解决方案** - 统一API，5分钟上手
@@ -160,7 +160,7 @@ FarTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，�
 
 ## 📞 社区支持
 
-- **GitHub仓库**: https://github.com/farfarfun/fartts
+- **GitHub仓库**: https://github.com/farfarfun/funtts
 - **文档网站**: 完整的在线文档
 - **示例代码**: 丰富的使用示例
 - **问题反馈**: GitHub Issues
@@ -169,18 +169,18 @@ FarTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，�
 
 ```bash
 # 快速安装
-pip install fartts[edge]
+pip install funtts-plus[edge]
 
 # 5分钟上手
 python -c "
-from fartts.tts.edge import EdgeTTS
-from fartts.models import TTSRequest
+from funtts.tts.edge import EdgeTTS
+from funtts.models import TTSRequest
 
 tts = EdgeTTS()
-request = TTSRequest(text='Hello, FarTTS!')
+request = TTSRequest(text='Hello, FunTTS!')
 response = tts.synthesize(request)
 print(f'音频文件: {response.audio_file}')
 "
 ```
 
-FarTTS - 让语音合成变得简单而强大！🎯
+FunTTS - 让语音合成变得简单而强大！🎯

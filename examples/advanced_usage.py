@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FarTTS高级使用示例
+FunTTS高级使用示例
 演示配置管理、批量处理、自定义引擎等高级功能
 """
 
@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from fartts import TTSFactory, create_tts, get_available_engines, get_config
+from funtts import TTSFactory, create_tts, get_available_engines, get_config
 
 
 def demo_config_management():
@@ -216,7 +216,7 @@ def demo_custom_engine():
     """演示如何注册自定义TTS引擎"""
     print("=== 自定义引擎示例 ===")
 
-    from fartts.base import BaseTTS
+    from funtts.base import BaseTTS
 
     class DemoTTS(BaseTTS):
         """演示用的自定义TTS引擎"""
@@ -271,7 +271,7 @@ def demo_custom_engine():
 
 def main():
     """主函数"""
-    print("=== FarTTS 高级使用示例 ===\n")
+    print("=== FunTTS 高级使用示例 ===\n")
 
     # 演示各种高级功能
     demo_config_management()
