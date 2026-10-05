@@ -1,186 +1,97 @@
-# FunTTS 项目发布清单
+# FunTTS 发布清单
 
-本文档记录了FunTTS项目的完善过程和发布前的检查清单。
+发布前按本清单逐项确认。版本号只在 `pyproject.toml` 里维护，其他任何地方都不要
+硬编码版本。
 
-## 🎯 项目概览
+## 1. 包身份
 
-FunTTS现在是一个功能完整、覆盖全面的企业级TTS解决方案，支持8个不同特色的TTS引擎，为用户提供从轻量级到工业级的全方位语音合成需求。
+| 项 | 当前值 |
+|----|--------|
+| PyPI 发行名 | `funtts-plus` |
+| 导入包名 | `funtts` |
+| GitHub 仓库 | `farfarfun/fartts` |
 
-## ✅ 已完成的核心功能
+> ⚠️ 三者目前不一致，需要仓库所有者决定统一到哪一个。改名前不要发版。
 
-### 1. TTS引擎集成 (8/9个引擎)
+确认项：
 
-| 引擎 | 状态 | 功能特色 | 文档 |
-|------|------|----------|------|
-| **Edge TTS** | ✅ 完成 | 免费、高质量、200+语音 | ✅ 完整文档 |
-| **Azure TTS** | ✅ 完成 | 企业级、SSML支持 | ✅ 完整文档 |
-| **Bark TTS** | ✅ 完成 | 特效音效、情感表达 | ✅ 完整文档 |
-| **Tortoise TTS** | ✅ 完成 | 极致质量、语音克隆 | ✅ 完整文档 |
-| **IndexTTS2** | ✅ 完成 | 情感控制、时长控制 | ✅ 完整文档 |
-| **KittenTTS** | ✅ 完成 | 神经网络、轻量级 | ✅ 完整文档 |
-| **eSpeak** | ✅ 完成 | 轻量级、离线运行 | ✅ 完整文档 |
-| **pyttsx3** | ✅ 完成 | 跨平台、本地TTS | ✅ 完整文档 |
-| ~~Coqui TTS~~ | ⚠️ 暂时禁用 | Python版本兼容性问题 | 📝 标记为禁用 |
+- [ ] `pyproject.toml` 的 `name` 与 PyPI 上已发布的发行名一致
+- [ ] `[tool.hatch.build.targets.wheel] packages` 指向 `src/funtts`
+- [ ] `uv build` 产出的 wheel 顶层目录是 `funtts/`
+- [ ] GitHub 仓库的 homepage 指向真实存在、且归属本组织的 PyPI 页面
+- [ ] README 徽章用的是发行名 `funtts-plus`
 
-### 2. 核心架构组件
+## 2. 引擎状态
 
-- ✅ **统一基类**: `BaseTTS` 提供标准接口
-- ✅ **数据模型**: `TTSRequest`、`TTSResponse`、`VoiceInfo`等
-- ✅ **工厂模式**: `TTSFactory` 统一创建和管理引擎
-- ✅ **配置管理**: `TTSConfig` 全局和引擎特定配置
-- ✅ **字幕支持**: `SubtitleMaker` 支持SRT、FRT格式
-- ✅ **工具函数**: 音频合并、字幕合并、响应合并
+必须和 `TTSFactory._auto_register_engines()` 的实际注册结果一致。
 
-### 3. 文档体系
+| 引擎 | 状态 | 说明 |
+|------|------|------|
+| Edge TTS | ✅ 可用 | `funtts-plus[edge]` |
+| Azure TTS | ✅ 可用 | `funtts-plus[azure]`，凭据走 `AZURE_SPEECH_KEY` 环境变量 |
+| Bark TTS | ✅ 可用 | `funtts-plus[bark]` |
+| Tortoise TTS | ✅ 可用 | `funtts-plus[tortoise]` |
+| eSpeak | ✅ 可用 | 需要系统安装 espeak |
+| pyttsx3 | ✅ 可用 | `funtts-plus[pyttsx3]` |
+| IndexTTS2 | 🚧 未完成 | 只有骨架，未对接真实模型，未注册 |
+| KittenTTS | 🚧 未完成 | 依赖包 `kitten_tts` 未发布到 PyPI |
+| Coqui TTS | ⚠️ 禁用 | 官方 `TTS` 发行版 Python 上限 3.12，未注册也没有 extra |
 
-- ✅ **主文档**: README.md 项目介绍和快速开始
-- ✅ **引擎文档**: 每个TTS引擎的详细使用指南
-- ✅ **选择指南**: TTS_ENGINE_SELECTION_GUIDE.md
-- ✅ **安装指南**: INSTALLATION_GUIDE.md
-- ✅ **示例代码**: comprehensive_example.py 综合演示
+确认项：
 
-### 4. 项目配置
+- [ ] README 引擎表、`docs/TTS_ENGINE_SELECTION_GUIDE.md`、本表三处状态一致
+- [ ] `tests/test_smoke.py::test_registered_engines_match_ttsengine_enum` 通过
+- [ ] 文档里的每条安装命令都真能装上（extra 存在且对应包已发布到 PyPI）
 
-- ✅ **依赖管理**: pyproject.toml 完整的可选依赖配置
-- ✅ **模块导入**: __init__.py 统一导入所有引擎
-- ✅ **日志配置**: 统一使用"funtts"日志名称
-- ✅ **错误处理**: 完善的异常处理和用户友好提示
+## 3. 代码与测试
 
-## 🚀 项目亮点
+- [ ] `ruff check .` 无告警
+- [ ] `ruff format --check .` 无差异
+- [ ] `uv run --isolated --no-project --with-editable . --with pytest python -m pytest tests -q`
+      全绿（测试不得依赖真实网络或模型下载）
+- [ ] 没有引擎重写公开的 `synthesize()`（由
+      `test_builtin_engines_do_not_override_public_synthesize` 守护）
+- [ ] 没有引擎自己写字幕文件（由
+      `test_heavy_engines_delegate_subtitle_writing_to_base` 守护）
 
-### 1. 全面的引擎支持
-- **8个不同特色的TTS引擎**，覆盖从免费到付费、从轻量到重量级的全部需求
-- **统一API接口**，无需学习不同引擎的API，一套代码适配所有引擎
-- **智能降级**，当首选引擎不可用时自动切换到备选引擎
+## 4. 安全
 
-### 2. 企业级特性
-- **完整的错误处理**和日志记录
-- **灵活的配置管理**，支持环境变量和配置文件
-- **Docker支持**，便于容器化部署
-- **性能优化**，支持批量处理和异步操作
+- [ ] 默认配置里没有任何凭据字段
+- [ ] `TTSConfig.set()` / `set_engine_config()` 拒绝写入凭据键
+- [ ] 日志只记录配置键名，不记录值
+- [ ] `git log -p --all | grep -iE 'sk-|token|password|secret|api_key'` 没有真实凭据
 
-### 3. 开发者友好
-- **类型安全**，完整的类型注解
-- **详细文档**，每个引擎都有完整的使用指南
-- **丰富示例**，从基础到高级的全套示例代码
-- **测试支持**，提供安装验证和功能测试脚本
+## 5. 文档
 
-### 4. 特色功能
-- **语音克隆**: Tortoise TTS提供专业级语音克隆
-- **特效音效**: Bark TTS支持笑声、音乐等特效
-- **情感控制**: Azure TTS和IndexTTS2支持情感和语调控制
-- **多语言**: 支持100+种语言和200+种语音
+- [ ] README 的最小示例在文档给出的安装命令之后可直接运行
+- [ ] `CHANGELOG.md` 的本版本条目与实际改动一一对应，不含未落地的声明
+- [ ] 文档中的仓库链接指向实际存在的仓库
+- [ ] 文档没有描述代码里不存在的环境变量、配置格式或 API
 
-## 📊 技术指标
+## 6. 发布
 
-### 性能基准
-- **Edge TTS**: 实时率12x，质量9.0/10
-- **Azure TTS**: 实时率7.5x，质量9.5/10
-- **eSpeak**: 实时率60x，质量5.0/10
-- **Bark TTS**: 实时率0.4x，质量8.0/10
-- **Tortoise TTS**: 实时率0.13x，质量9.8/10
+发版属于仓库所有者的决定，审计/修复类改动不得顺带发版、也不得改动版本号。
 
-### 资源需求
-- **最低配置**: 4GB RAM，Python 3.8+
-- **推荐配置**: 8GB RAM，GPU支持，Python 3.9+
-- **存储需求**: 基础安装100MB，完整安装5GB+
+- [ ] `pyproject.toml` 的版本号由所有者确认
+- [ ] `uv build` 产物已本地校验
+- [ ] 发布后在 GitHub Releases 写明本次改动
 
-## 🎯 适用场景
-
-### 个人用户
-- **博客配音**: Edge TTS免费高质量
-- **学习工具**: 多语言支持，离线可用
-- **创意项目**: Bark TTS特效音效
-
-### 企业用户
-- **客服系统**: Azure TTS企业级稳定性
-- **教育平台**: 多引擎备份，高可用性
-- **内容制作**: Tortoise TTS专业级质量
-
-### 开发者
-- **快速集成**: 统一API，5分钟上手
-- **灵活扩展**: 插件化架构，易于扩展
-- **生产就绪**: 完整的错误处理和日志
-
-## 🔄 版本历史
-
-### v0.1.9 (当前版本)
-- ✅ 集成8个TTS引擎
-- ✅ 完整的文档体系
-- ✅ 统一的API接口
-- ✅ Docker支持
-- ⚠️ 暂时禁用Coqui TTS（兼容性问题）
-
-### 未来规划
-- 🔮 添加更多TTS引擎（VITS、Chatterbox等）
-- 🔮 Web界面和REST API
-- 🔮 实时语音合成支持
-- 🔮 语音质量评估工具
-
-## 📋 发布前检查清单
-
-### 代码质量
-- ✅ 所有引擎都有完整的错误处理
-- ✅ 统一的日志配置
-- ✅ 类型注解完整
-- ✅ 代码风格一致
-
-### 文档完整性
-- ✅ 主README文档更新
-- ✅ 每个引擎都有详细文档
-- ✅ 安装和部署指南
-- ✅ 选择指南和最佳实践
-
-### 测试覆盖
-- ✅ 基础功能测试脚本
-- ✅ 安装验证脚本
-- ✅ 综合示例演示
-- 🔄 需要：单元测试和集成测试
-
-### 依赖管理
-- ✅ pyproject.toml配置完整
-- ✅ 可选依赖正确配置
-- ✅ 版本号更新到0.1.9
-- ✅ 移除有问题的依赖（Coqui TTS）
-
-### 部署支持
-- ✅ Docker配置
-- ✅ 环境变量配置
-- ✅ 系统服务配置示例
-- ✅ 负载均衡配置示例
-
-## 🎉 项目成就
-
-通过这次大规模的完善工作，FunTTS项目现在已经成为：
-
-1. **最全面的开源TTS工具包** - 支持8种不同特色的TTS引擎
-2. **最易用的TTS解决方案** - 统一API，5分钟上手
-3. **最完整的文档体系** - 从入门到精通的全套指南
-4. **最稳定的生产方案** - 企业级错误处理和日志记录
-
-## 📞 社区支持
-
-- **GitHub仓库**: https://github.com/farfarfun/fartts
-- **文档网站**: 完整的在线文档
-- **示例代码**: 丰富的使用示例
-- **问题反馈**: GitHub Issues
-
-## 🚀 立即开始
+## 快速验证
 
 ```bash
-# 快速安装
-pip install funtts-plus[edge]
+pip install "funtts-plus[edge]"
 
-# 5分钟上手
 python -c "
 from funtts.tts.edge import EdgeTTS
 from funtts.models import TTSRequest
 
 tts = EdgeTTS()
-request = TTSRequest(text='Hello, FunTTS!')
-response = tts.synthesize(request)
-print(f'音频文件: {response.audio_file}')
+response = tts.synthesize(TTSRequest(text='Hello, FunTTS!'))
+print('音频文件:', response.audio_file)
 "
 ```
 
-FunTTS - 让语音合成变得简单而强大！🎯
+## 社区
+
+- GitHub 仓库: https://github.com/farfarfun/fartts
+- 问题反馈: GitHub Issues

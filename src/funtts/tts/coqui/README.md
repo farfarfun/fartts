@@ -21,7 +21,7 @@ Coqui TTS（原Mozilla TTS）是目前最受欢迎的开源TTS工具包之一，
 ## 依赖要求
 
 ### Python版本
-- Python >= 3.8, < 3.12
+- Python >= 3.10, < 3.12（官方 `TTS` 发行版的上限；这也是本引擎被禁用的原因。维护中的 `coqui-tts` 分支支持到 3.14）
 
 ### 核心依赖
 ```bash

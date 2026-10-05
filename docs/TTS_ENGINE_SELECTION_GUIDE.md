@@ -1,6 +1,11 @@
 # TTS引擎选择指南
 
-本指南将帮助你根据具体需求选择最合适的TTS引擎。FunTTS支持9种不同特色的TTS引擎，每种都有其独特的优势和适用场景。
+本指南将帮助你根据具体需求选择最合适的TTS引擎。
+
+> ⚠️ 当前真正可用（已注册到 `TTSFactory`）的引擎是 6 个：**Edge、Azure、Bark、
+> Tortoise、eSpeak、pyttsx3**。另外三个在仓库里有代码但不可用：IndexTTS2（只有
+> 骨架）、KittenTTS（依赖包未发布到 PyPI）、Coqui TTS（Python 版本兼容性，未注册
+> 也没有 extra）。下文对这三个引擎的描述属于目标能力，不是现状。
 
 ## 🚀 快速选择
 
@@ -11,9 +16,9 @@
 | **日常使用** | Edge TTS | Azure TTS | 免费、高质量、速度快 |
 | **商业应用** | Azure TTS | Edge TTS | 企业级支持、SSML控制 |
 | **创意内容** | Bark TTS | Tortoise TTS | 特效音效、情感表达 |
-| **语音克隆** | Tortoise TTS | Coqui TTS | 极高质量、专业克隆 |
+| **语音克隆** | Tortoise TTS | — | 极高质量、专业克隆（Coqui 暂时禁用）|
 | **嵌入式设备** | eSpeak | pyttsx3 | 轻量级、离线运行 |
-| **研究开发** | IndexTTS2 | Bark TTS | 情感控制、特效音效 |
+| **研究开发** | Bark TTS | Tortoise TTS | 特效音效、情感表达（IndexTTS2 未完成）|
 
 ## 📊 详细对比
 
@@ -157,10 +162,9 @@ pip install funtts-plus[tortoise]
 - AI助手和聊天机器人
 - 教育和培训内容
 
-**安装:**
-```bash
-pip install "funtts-plus[indextts]"
-```
+**当前状态:** ⚠️ 未完成。`src/funtts/tts/indextts2/` 下只有骨架代码，尚未对接真实
+模型，未注册到 `TTSFactory`，调用会抛 `NotImplementedError`。上面描述的是目标能力。
+`indextts` extra 也没有发布到 PyPI（只能通过 uv 从 git 拉取）。
 
 ### 7. KittenTTS 🐱 **神经网络**
 
@@ -181,10 +185,9 @@ pip install "funtts-plus[indextts]"
 - 学习和实验
 - 快速原型开发
 
-**安装:**
-```bash
-pip install funtts-plus[kitten]
-```
+**当前状态:** ⚠️ 未完成。代码按假想的 `kitten_tts` API 编写，而该包未发布到
+PyPI，实例化会抛 `ImportError`；`funtts-plus[kitten]` 只声明了
+torch/torchaudio/soundfile/numpy，不含模型包。上面描述的是目标能力。
 
 ### 8. eSpeak TTS 🔧 **轻量级**
 
@@ -244,7 +247,7 @@ pip install funtts-plus[pyttsx3]
 |----------|----------|------|
 | **极高质量** | Tortoise TTS → Azure TTS → Edge TTS | 接近真人，适合专业制作 |
 | **高质量** | Edge TTS → Azure TTS → Coqui TTS | 日常使用的最佳选择 |
-| **中等质量** | IndexTTS2 → Bark TTS → KittenTTS | 平衡质量和速度 |
+| **中等质量** | Bark TTS | 平衡质量和速度 |
 | **基础质量** | pyttsx3 → eSpeak | 功能性优先 |
 
 ### 按速度要求
@@ -252,9 +255,9 @@ pip install funtts-plus[pyttsx3]
 | 速度等级 | 推荐引擎 | 实时率 |
 |----------|----------|--------|
 | **极速** | eSpeak → pyttsx3 | > 50x |
-| **快速** | Edge TTS → KittenTTS | 10-20x |
+| **快速** | Edge TTS → pyttsx3 | 10-30x |
 | **中速** | Azure TTS → Coqui TTS | 5-10x |
-| **慢速** | IndexTTS2 → Bark TTS → Tortoise TTS | < 5x |
+| **慢速** | Bark TTS → Tortoise TTS | < 5x |
 
 ### 按功能需求
 
@@ -262,7 +265,7 @@ pip install funtts-plus[pyttsx3]
 |----------|----------|------|
 | **语音克隆** | Tortoise TTS → Coqui TTS | 专业级克隆能力 |
 | **特效音效** | Bark TTS | 独有的非语言声音 |
-| **情感控制** | Azure TTS → IndexTTS2 | SSML或情感参数 |
+| **情感控制** | Azure TTS → Bark TTS | SSML或情感提示 |
 | **多语言** | Edge TTS → Azure TTS → Coqui TTS | 100+语言支持 |
 | **离线使用** | pyttsx3 → eSpeak → Coqui TTS | 无需网络连接 |
 | **自定义训练** | Coqui TTS | 可训练专属模型 |

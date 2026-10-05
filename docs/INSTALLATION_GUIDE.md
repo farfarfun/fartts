@@ -5,7 +5,7 @@
 ## 📋 系统要求
 
 ### 基础要求
-- **Python**: 3.8+ (推荐3.9+)
+- **Python**: 3.10+（与 `pyproject.toml` 的 `requires-python = ">=3.10"` 一致）
 - **操作系统**: Windows 10+, macOS 10.15+, Ubuntu 18.04+
 - **内存**: 最少4GB RAM (推荐8GB+)
 - **存储**: 至少2GB可用空间
@@ -112,19 +112,17 @@ python -c "from funtts.tts.tortoise import TortoiseTTS; TortoiseTTS()"
 - 🔥 强烈推荐使用GPU加速
 - 🎯 适合专业语音克隆应用
 
-### IndexTTS2 (情感控制)
+### IndexTTS2 (情感控制) — 暂不可用
 
-```bash
-# 安装IndexTTS2
-uv pip install "funtts-plus[indextts]"
-```
+引擎只有骨架、尚未对接真实模型，未注册到 `TTSFactory`；`indextts` 也没有发布到
+PyPI（`pip install` 必然失败，仅 `uv sync --extra indextts` 能从 git 拉取）。
+实现完成后再补安装说明。
 
-### KittenTTS (神经网络)
+### KittenTTS (神经网络) — 暂不可用
 
-```bash
-# 安装KittenTTS
-uv pip install "funtts-plus[kitten]"
-```
+代码按假想的 `kitten_tts` API 编写，而该包未发布到 PyPI，实例化会抛
+`ImportError`；`funtts-plus[kitten]` 只声明了 torch/torchaudio/soundfile/numpy，
+不含模型包。
 
 ### eSpeak (轻量级)
 
@@ -159,7 +157,7 @@ uv pip install "funtts-plus[all]"
 ### 基础镜像
 
 ```dockerfile
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # 安装系统依赖
 RUN apt-get update && apt-get install -y \

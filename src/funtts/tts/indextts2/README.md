@@ -25,7 +25,7 @@ IndexTTS2基于先进的神经网络架构，提供了工业级的语音合成�
 ## 依赖要求
 
 ### Python版本
-- Python >= 3.8
+- Python >= 3.10（本项目 `requires-python` 为 `>=3.10`）
 
 ### 核心依赖
 ```bash
