@@ -440,5 +440,5 @@ class KittenTTS(BaseTTS):
                 del self.model
                 if torch and torch.cuda.is_available():
                     torch.cuda.empty_cache()
-            except Exception:
-                pass
+            except (AttributeError, RuntimeError) as exc:
+                logger.debug(f"清理 KittenTTS 模型资源失败: {exc}")

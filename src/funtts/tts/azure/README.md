@@ -70,27 +70,9 @@ export AZURE_SPEECH_KEY="your-speech-service-key"
 export AZURE_SPEECH_REGION="your-service-region"  # 如: eastus, westus2
 ```
 
-### 程序化配置
-
-```python
-from funtts import TTSFactory
-
-# 方式1: 通过参数配置
-tts = TTSFactory.create_tts(
-    "azure",
-    "zh-CN-XiaoxiaoNeural",
-    speech_key="your-speech-service-key",
-    service_region="eastus",
-)
-
-# 方式2: 通过全局配置
-from funtts import get_config
-
-config = get_config()
-config.set_engine_config(
-    "azure", {"speech_key": "your-speech-service-key", "service_region": "eastus"}
-)
-```
+Azure 密钥必须通过 `AZURE_SPEECH_KEY` 环境变量提供，不能作为构造参数或写入
+配置文件。非敏感的区域可通过 `AZURE_SPEECH_REGION` 环境变量提供；也可将
+`service_region` 写入引擎配置。
 
 ### 高级配置
 
@@ -117,9 +99,7 @@ request = TTSRequest(
 from funtts import TTSFactory, TTSRequest
 
 # 创建引擎实例
-tts = TTSFactory.create_tts(
-    "azure", "zh-CN-XiaoxiaoNeural", speech_key="your-key", service_region="eastus"
-)
+tts = TTSFactory.create_tts("azure", "zh-CN-XiaoxiaoNeural")
 
 # 合成语音
 request = TTSRequest(

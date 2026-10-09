@@ -225,8 +225,8 @@ class Pyttsx3TTS(BaseTTS):
                 for voice in voices:
                     if voice.id == current_voice:
                         return voice.name
-        except Exception:
-            pass
+        except (AttributeError, RuntimeError) as exc:
+            logger.debug(f"无法读取当前 pyttsx3 语音: {exc}")
         return self.voice_name
 
     def _generate_subtitles(
@@ -444,16 +444,18 @@ class Pyttsx3TTS(BaseTTS):
             if result.returncode == 0 and result.stdout.strip():
                 return float(result.stdout.strip())
 
-        except Exception:
-            pass
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            logger.debug(
+                f"无法通过 ffprobe 获取 pyttsx3 音频时长，改用文件大小估算: {exc}"
+            )
 
         try:
             # 基于文件大小估算（WAV文件）
             file_size = os.path.getsize(audio_file)
             # WAV文件大约44KB/s (22kHz, 16bit, mono)
             return max(0.1, file_size / 44000)
-        except Exception:
-            pass
+        except OSError as exc:
+            logger.debug(f"无法读取 pyttsx3 音频文件大小，改用文本长度估算: {exc}")
 
         # 基于文本长度估算（每分钟约200词）
         word_count = len(text.split())
@@ -484,5 +486,5 @@ class Pyttsx3TTS(BaseTTS):
         if hasattr(self, "engine") and self.engine:
             try:
                 self.engine.stop()
-            except Exception:
-                pass
+            except (AttributeError, RuntimeError) as exc:
+                logger.debug(f"停止 pyttsx3 引擎失败: {exc}")

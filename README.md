@@ -516,32 +516,28 @@ if response.success:
 from funtts.base import BaseTTS
 from funtts import TTSFactory, TTSRequest, TTSResponse
 from funtts.models import VoiceInfo
+from farlog import getLogger
 from typing import List
+
+logger = getLogger("funtts.tts.custom")
 
 
 class MyCustomTTS(BaseTTS):
     """自定义TTS引擎示例"""
 
-    def synthesize(self, request: TTSRequest) -> TTSResponse:
-        """实现语音合成"""
-        try:
-            # 这里实现你的TTS逻辑
-            print(f"CustomTTS: 正在合成 '{request.text[:20]}...'")
+    def _synthesize(self, request: TTSRequest) -> TTSResponse:
+        """实现引擎特有的语音合成逻辑。"""
+        logger.info(f"CustomTTS: 正在合成 '{request.text[:20]}...'")
+        with open(request.output_file, "wb") as f:
+            f.write(b"\x00" * 1024)  # 示例数据
 
-            # 创建示例音频文件
-            with open(request.output_file, "wb") as f:
-                f.write(b"\x00" * 1024)  # 示例数据
-
-            return TTSResponse(
-                success=True,
-                request=request,
-                audio_file=request.output_file,
-                duration=2.0,
-                voice_used="custom_voice",
-                engine_info={"engine": "custom", "version": "1.0"},
-            )
-        except Exception as e:
-            return TTSResponse(success=False, request=request, error_message=str(e))
+        return TTSResponse(
+            success=True,
+            request=request,
+            audio_file=request.output_file,
+            duration=2.0,
+            voice_used="custom_voice",
+        )
 
     def list_voices(self, language: str = None) -> List[VoiceInfo]:
         """返回可用语音列表"""

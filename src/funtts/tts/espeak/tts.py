@@ -358,8 +358,10 @@ class EspeakTTS(BaseTTS):
             )
             if result.returncode == 0:
                 return float(result.stdout.strip())
-        except Exception:
-            pass
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            logger.debug(
+                f"无法通过 ffprobe 获取 eSpeak 音频时长，改用文件大小估算: {exc}"
+            )
 
         # 估算时长
         try:
@@ -383,8 +385,8 @@ class EspeakTTS(BaseTTS):
             )
             if result.returncode == 0:
                 version = result.stdout.strip().split("\n")[0]
-        except Exception:
-            pass
+        except (OSError, subprocess.SubprocessError) as exc:
+            logger.debug(f"无法获取 eSpeak 版本: {exc}")
 
         return {
             "engine": "espeak",
