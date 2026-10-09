@@ -196,8 +196,8 @@ RUN apt-get update && apt-get install -y \
 # 安装PyTorch (GPU版本)
 RUN pip3 install torch torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-# 安装FunTTS (包含GPU支持的引擎)
-RUN pip3 install "funtts-plus[bark,tortoise,indextts,kitten]"
+# 安装可发布的 GPU 引擎（IndexTTS2 与 KittenTTS 暂不可用）
+RUN pip3 install "funtts-plus[bark,tortoise]"
 
 WORKDIR /app
 COPY . .
@@ -374,7 +374,7 @@ if __name__ == "__main__":
 pip list | grep funtts
 
 # 重新安装
-pip uninstall funtts
+pip uninstall funtts-plus
 pip install funtts-plus
 ```
 
@@ -448,10 +448,10 @@ tts = BarkTTS(use_small_models=True)
 
 ```bash
 # 查看当前版本
-pip show funtts
+pip show funtts-plus
 
 # 升级到最新版本
-uv pip install --upgrade funtts
+uv pip install --upgrade funtts-plus
 
 # 升级特定引擎
 uv pip install --upgrade "funtts-plus[edge,azure]"

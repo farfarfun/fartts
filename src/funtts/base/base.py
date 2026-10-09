@@ -12,6 +12,12 @@ logger = getLogger("funtts")
 
 
 class BaseTTS(ABC):
+    """TTS 引擎抽象基类。
+
+    ``synthesize()`` 提供请求校验、输出文件与字幕落盘等公共流程；子类只需
+    实现 ``_synthesize()`` 和 ``list_voices()`` 来提供引擎特有的合成逻辑。
+    """
+
     # ==================== 类变量 ====================
     supported_formats: list[str] = ["wav"]  # 子类可以重写
     supports_subtitles: bool = True  # 子类可以重写

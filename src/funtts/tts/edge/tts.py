@@ -277,8 +277,10 @@ class EdgeTTS(BaseTTS):
 
             if result.returncode == 0:
                 return float(result.stdout.strip())
-        except Exception:
-            pass
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            logger.debug(
+                f"无法通过 ffprobe 获取 Edge 音频时长，改用文件大小估算: {exc}"
+            )
 
         # 估算时长
         try:

@@ -37,12 +37,15 @@ class AzureTTS(BaseTTS):
 
         Args:
             voice_name: 默认语音名称
-            **kwargs: 其他配置参数，包括:
-                - speech_key: Azure语音服务密钥
-                - service_region: Azure服务区域
+            **kwargs: 其他非敏感配置参数，例如 service_region。Azure 密钥只能
+                通过 AZURE_SPEECH_KEY 环境变量提供。
         """
+        if {"speech_key", "subscription_key"}.intersection(kwargs):
+            raise ValueError(
+                "Azure 密钥不能作为构造参数传入，请使用 AZURE_SPEECH_KEY 环境变量"
+            )
         super().__init__(voice_name, **kwargs)
-        self.speech_key = kwargs.get("speech_key") or os.getenv("AZURE_SPEECH_KEY", "")
+        self.speech_key = os.getenv("AZURE_SPEECH_KEY", "")
         self.service_region = kwargs.get("service_region") or os.getenv(
             "AZURE_SPEECH_REGION", ""
         )
@@ -416,8 +419,10 @@ class AzureTTS(BaseTTS):
             )
             if result.returncode == 0:
                 return float(result.stdout.strip())
-        except Exception:
-            pass
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            logger.debug(
+                f"无法通过 ffprobe 获取 Azure 音频时长，改用文件大小估算: {exc}"
+            )
 
         # 估算时长
         try:

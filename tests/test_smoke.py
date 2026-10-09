@@ -196,6 +196,14 @@ def test_azure_tts_constructs_without_real_credentials():
     assert tts.get_engine_info()["engine_name"] == "AzureTTS"
 
 
+def test_azure_tts_rejects_credentials_passed_as_constructor_arguments():
+    """Azure 密钥必须经由环境变量提供，避免被普通配置或调用参数持久化。"""
+    from funtts.tts.azure import AzureTTS
+
+    with pytest.raises(ValueError, match="AZURE_SPEECH_KEY"):
+        AzureTTS(speech_key="not-a-real-key")
+
+
 def test_azure_tts_synthesize_without_credentials_fails_gracefully():
     from funtts.models import TTSRequest
     from funtts.tts.azure import AzureTTS
