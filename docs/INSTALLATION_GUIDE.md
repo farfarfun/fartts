@@ -114,9 +114,8 @@ python -c "from funtts.tts.tortoise import TortoiseTTS; TortoiseTTS()"
 
 ### IndexTTS2 (情感控制) — 暂不可用
 
-引擎只有骨架、尚未对接真实模型，未注册到 `TTSFactory`；`indextts` 也没有发布到
-PyPI（`pip install` 必然失败，仅 `uv sync --extra indextts` 能从 git 拉取）。
-实现完成后再补安装说明。
+引擎只有骨架、尚未对接真实模型，未注册到 `TTSFactory`；目前不提供 `indextts`
+安装 extra。实现完成并有可安装的模型包后再补安装说明。
 
 ### KittenTTS (神经网络) — 暂不可用
 

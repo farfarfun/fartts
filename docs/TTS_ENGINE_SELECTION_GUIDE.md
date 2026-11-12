@@ -164,7 +164,7 @@ pip install funtts-plus[tortoise]
 
 **当前状态:** ⚠️ 未完成。`src/funtts/tts/indextts2/` 下只有骨架代码，尚未对接真实
 模型，未注册到 `TTSFactory`，调用会抛 `NotImplementedError`。上面描述的是目标能力。
-`indextts` extra 也没有发布到 PyPI（只能通过 uv 从 git 拉取）。
+目前不提供 `indextts` 安装 extra。
 
 ### 7. KittenTTS 🐱 **神经网络**
 

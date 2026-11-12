@@ -49,13 +49,7 @@ librosa>=0.9.0
 
 ## 安装
 
-### 基础安装
-```bash
-# 注意：indextts 未发布到 PyPI，下面这条命令在 pip 下会失败，
-# 只有 uv 能用（pyproject 里配了 [tool.uv.sources.indextts] 指向 git）。
-# 且即便装上，引擎本身也还没对接模型，装了也用不了。
-uv sync --extra indextts
-```
+IndexTTS2 尚未对接真实模型，当前不提供 `indextts` 安装 extra。
 
 ### 完整安装
 ```bash

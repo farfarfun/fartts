@@ -4,6 +4,7 @@
 
 ### 修复
 
+- 移除尚未接入真实模型的 `indextts` extra 及指向未固定 Git 分支的 uv 来源；此前该 extra 无法通过 pip 安装，且引擎本身不可用。
 - 修复 Bark、Coqui、IndexTTS2、Kitten、Pyttsx3 和 Tortoise 引擎因未实现 `_synthesize` 而无法实例化的问题。
 - 修复 Tortoise 与 Coqui 的字幕模块导入，并为字幕保存失败补充上下文日志。
 - 修复 `BaseTTS.__init__` 此前完全是空实现（`pass`），导致 Pyttsx3TTS/KittenTTS

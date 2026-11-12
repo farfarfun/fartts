@@ -32,7 +32,6 @@ edge = [ "edge-tts>=6.1.0",]
 azure = [ "azure-cognitiveservices-speech>=1.30.0",]
 bark = [ "bark>=0.1.5", "torch>=1.9.0", "torchaudio>=0.9.0", "scipy>=1.7.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
 tortoise = [ "tortoise-tts>=2.4.0", "torch>=1.9.0", "torchaudio>=0.9.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
-indextts = [ "indextts; python_version >= '3.10' and python_version < '3.13'",]
 kitten = [ "torch>=1.9.0", "torchaudio>=0.9.0", "soundfile>=0.10.0", "numpy>=1.20.0",]
 espeak = []
 pyttsx3 = [ "pyttsx3>=2.90",]
@@ -46,17 +45,8 @@ Releases = "https://github.com/farfarfun/fartts/releases"
 [tool.hatch.build.targets.wheel]
 packages = ["src/funtts"]
 
-[tool.uv.sources.indextts]
-git = "https://github.com/index-tts/index-tts.git"
-
-[tool.uv]
-conflicts = [
-    [{ extra = "tortoise" }, { extra = "indextts" }],
-    [{ extra = "all" }, { extra = "indextts" }],
-]
-
 [dependency-groups]
-dev = [ "pytest>=7.0.0", "ruff>=0.9.0",]
+dev = [ "pytest>=7.0.0", "ruff>=0.9.0", "edge-tts>=6.1.0",]
 
 [tool.ruff]
 target-version = "py310"
